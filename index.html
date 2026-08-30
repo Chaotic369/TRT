@@ -265,8 +265,8 @@
     <div id="adminPanel" class="admin-panel">
         <h2>Participants by Game</h2>
         <div id="adminData">No participants yet.</div>
-        <button type="button" class="submit-btn" style="margin-top:20px; background:#444;" onclick="localStorage.removeItem('techrootData'); location.reload();">Clear All Data</button>
-    </div>
+                <button type="button" class="submit-btn" style="margin-top:20px; background:var(--accent); color:var(--bg-color);" onclick="localStorage.removeItem('techrootData'); location.reload();">Clear All Data</button>
+            </div>
 
     <form id="registrationForm" class="form-panel">
         <h2>Student Info</h2>
@@ -289,9 +289,9 @@
 
         <h2>Select Games</h2>
         <p style="text-align:center; color: var(--text-muted); font-size:0.9em;">
-            Select up to 3 games. Games happening at the same time cannot be selected together.<br>
-            <span style="color:var(--neon-green)">1 Game = ₹100 | 2 or 3 Games = ₹150</span>
-        </p>
+                    Select up to 3 games. Games happening at the same time cannot be selected together.<br>
+                    <span style="color:var(--highlight)">1 Game = ₹100 | 2 or 3 Games = ₹150</span>
+                </p>
 
         <div class="day-group">
             <div class="day-title">Day 1 (10 Sep)</div>
@@ -351,12 +351,12 @@
             </div>
 
             <div class="upi-details" id="upiSection">
-                <p style="color:var(--neon-yellow)">Scan QR to Pay via UPI</p>
-                <div style="width: 150px; height: 150px; background: #fff; margin: 0 auto; display: flex; align-items: center; justify-content: center; color: #000; font-weight: bold;">
-                    [ QR CODE ]
-                </div>
-                <p style="font-size: 0.9em; margin-top:10px;">UPI ID: techroot@college</p>
-            </div>
+                            <p style="color:var(--accent); font-weight:600;">Scan QR to Pay via UPI</p>
+                            <div style="width: 150px; height: 150px; background: #fff; margin: 0 auto; display: flex; align-items: center; justify-content: center; color: #000; font-weight: bold;">
+                                [ QR CODE ]
+                            </div>
+                            <p style="font-size: 0.9em; margin-top:10px; color:var(--text-muted);">UPI ID: techroot@college</p>
+                        </div>
         </div>
 
         <button type="submit" class="submit-btn" id="submitBtn" disabled>Complete Registration</button>
@@ -499,33 +499,33 @@
             });
 
             function renderAdmin() {
-                const data = JSON.parse(localStorage.getItem('techrootData') || '[]');
-                const adminData = document.getElementById('adminData');
+                            const data = JSON.parse(localStorage.getItem('techrootData') || '[]');
+                            const adminData = document.getElementById('adminData');
         
-                if (data.length === 0) {
-                    adminData.innerHTML = "<p style='text-align:center; color:#888;'>No participants registered yet.</p>";
-                    return;
-                }
+                            if (data.length === 0) {
+                                adminData.innerHTML = "<p style='text-align:center; color:var(--text-muted);'>No participants registered yet.</p>";
+                                return;
+                            }
 
-                const categoryMap = {};
-                data.forEach(user => {
-                    user.games.forEach(game => {
-                        if (!categoryMap[game]) categoryMap[game] = [];
-                        categoryMap[game].push(`<b>${user.name}</b> <span style="color:#888;">(${user.course})</span><br><span style="color:var(--neon-yellow); font-size: 0.9em;">${user.phone}</span>`);
-                    });
-                });
+                            const categoryMap = {};
+                            data.forEach(user => {
+                                user.games.forEach(game => {
+                                    if (!categoryMap[game]) categoryMap[game] = [];
+                                    categoryMap[game].push(`<b>${user.name}</b> <span style="color:var(--text-muted);">(${user.course})</span><br><span style="color:var(--accent); font-size: 0.9em;">${user.phone}</span>`);
+                                });
+                            });
 
-                let html = '';
-                for (const [game, users] of Object.entries(categoryMap)) {
-                    html += `<div class="category-block">
-                                <h4>${game} <span style="float:right; color:#fff">${users.length}</span></h4>
-                                <ul class="participant-list">
-                                    ${users.map(u => `<li>${u}</li>`).join('')}
-                                </ul>
-                            </div>`;
-                }
-                adminData.innerHTML = html;
-            }
+                            let html = '';
+                            for (const [game, users] of Object.entries(categoryMap)) {
+                                html += `<div class="category-block">
+                                            <h4>${game} <span style="float:right; color:var(--highlight);">${users.length}</span></h4>
+                                            <ul class="participant-list">
+                                                ${users.map(u => `<li>${u}</li>`).join('')}
+                                            </ul>
+                                        </div>`;
+                            }
+                            adminData.innerHTML = html;
+                        }
         </script>
 
 </body>
