@@ -134,41 +134,82 @@
                 background: var(--bg-color);
             }
 
-            .day-group { margin-bottom: 25px; }
-            .day-title {
-                color: var(--accent);
-                font-family: 'JetBrains Mono', monospace;
-                margin-bottom: 12px;
-                font-size: 0.8em;
-                text-transform: uppercase;
-                letter-spacing: 1px;
-                font-weight: 700;
-            }
+            .day-group { margin-bottom: 35px; text-align: center; }
+                        .day-title {
+                            color: var(--text-main);
+                            font-family: 'JetBrains Mono', monospace;
+                            margin-bottom: 20px;
+                            font-size: 1.1em;
+                            text-transform: uppercase;
+                            letter-spacing: 1px;
+                            font-weight: 700;
+                        }
 
-            .event-grid { display: flex; flex-direction: column; gap: 8px; }
-            .event-card {
-                background: var(--panel-bg);
-                padding: 16px;
-                border-radius: 16px;
-                cursor: pointer;
-                transition: all 0.2s ease;
-                position: relative;
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-            }
-            .event-card:hover:not(.disabled) { 
-                background: var(--border-color); 
-            }
-            .event-card.selected {
-                background: var(--bg-color);
-                box-shadow: inset 0 0 0 2px var(--highlight);
-            }
-            .event-card.disabled { opacity: 0.4; cursor: not-allowed; }
-            .event-card h4 { margin: 0; color: var(--text-main); font-weight: 600; font-size: 0.95em; }
-            .event-time { font-family: 'JetBrains Mono', monospace; font-size: 0.75em; color: var(--accent); display: flex; flex-direction: column; text-align: right; gap: 4px; }
+                        .event-grid {
+                            display: flex;
+                            flex-wrap: wrap;
+                            justify-content: center;
+                            gap: 8px;
+                        }
+                        .event-card {
+                            background: var(--panel-bg);
+                            width: 145px;
+                            height: 135px;
+                            clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%);
+                            cursor: pointer;
+                            transition: all 0.2s ease;
+                            position: relative;
+                            display: flex;
+                            flex-direction: column;
+                            justify-content: center;
+                            align-items: center;
+                            text-align: center;
+                            padding: 10px 15px;
+                            box-sizing: border-box;
+                        }
+                        .event-card:hover:not(.disabled) { 
+                            background: var(--border-color);
+                            transform: scale(1.05);
+                        }
+                        .event-card.selected {
+                            background: var(--highlight);
+                        }
+                        .event-card.disabled { opacity: 0.4; cursor: not-allowed; filter: grayscale(100%); }
+                        .event-card h4 {
+                            margin: 0 0 6px 0;
+                            color: var(--text-main);
+                            font-weight: 700;
+                            font-size: 0.85em;
+                            line-height: 1.2;
+                            transition: color 0.2s;
+                        }
+                        .event-time {
+                            font-family: 'JetBrains Mono', monospace;
+                            font-size: 0.7em;
+                            color: var(--accent);
+                            display: flex;
+                            flex-direction: column;
+                            align-items: center;
+                            gap: 4px;
+                            transition: color 0.2s;
+                        }
+                        .event-day-label {
+                            margin-top: 8px;
+                            font-size: 0.95em;
+                            font-weight: 800;
+                            color: var(--text-muted);
+                            transition: color 0.2s;
+                        }
+            
+                        /* Text changes on select to contrast with dark highlight */
+                        .event-card.selected h4,
+                        .event-card.selected .event-time,
+                        .event-card.selected .event-time span,
+                        .event-card.selected .event-day-label {
+                            color: var(--bg-color) !important;
+                        }
         
-            .event-checkbox { position: absolute; opacity: 0; cursor: pointer; height: 0; width: 0; }
+                        .event-checkbox { position: absolute; opacity: 0; cursor: pointer; height: 0; width: 0; }
 
             .summary-panel {
                 background: var(--panel-bg);
@@ -448,8 +489,19 @@
     
     const MAX_GAMES = 3;
 
-    // Handle Payment Method Toggle
-    paymentRadios.forEach(radio => {
+        // Inject Day labels directly into the cards
+        document.querySelectorAll('.day-group').forEach((group, index) => {
+            const dayNum = index + 1;
+            group.querySelectorAll('.event-time').forEach(timeContainer => {
+                const daySpan = document.createElement('span');
+                daySpan.className = 'event-day-label';
+                daySpan.innerText = `Day ${dayNum}`;
+                timeContainer.appendChild(daySpan);
+            });
+        });
+
+        // Handle Payment Method Toggle
+        paymentRadios.forEach(radio => {
         radio.addEventListener('change', (e) => {
             if (e.target.value === 'UPI') {
                 upiSection.classList.add('active');
