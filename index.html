@@ -343,7 +343,7 @@
         </div>
 
     <div id="adminPanel" class="admin-panel">
-            <h2>Participants by Game</h2>
+            <h2>Participants</h2>
             <div id="adminData">No participants yet.</div>
                     <div style="display: flex; gap: 10px; margin-top:20px; flex-wrap: wrap;">
                                         <button type="button" class="submit-btn" style="margin-top:0; background:var(--accent); color:var(--bg-color); flex: 1;" onclick="if(confirm('Clear all data?')) { fetch('https://techroot-11e5d-default-rtdb.firebaseio.com/registrations.json', {method:'DELETE'}).catch(e=>console.error(e)); fetch('https://techroot-11e5d-default-rtdb.firebaseio.com/settings/pattern.json', {method:'DELETE'}).catch(e=>console.error(e)); localStorage.removeItem('techrootData'); localStorage.removeItem('adminPattern'); location.reload(); }">Clear Data</button>
@@ -891,35 +891,22 @@
                                                                     return;
                                                                 }
 
-                                                                const categoryMap = {};
+                                                                let html = '';
                                                                                                                                 data.forEach(user => {
                                                                                                                                     const uid = user.firebaseKey || user.id || user.phone;
-                                                                                                                                    user.games.forEach(game => {
-                                                                                                                                        if (!categoryMap[game]) categoryMap[game] = [];
-                                                                                                                                        categoryMap[game].push(`
-                                                                                                                                            <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom: 8px;">
-                                                                                                                                                <div>
-                                                                                                                                                    <b>${user.name}</b> <span style="color:var(--text-muted); font-size:0.9em;">(${user.course})</span><br>
-                                                                                                                                                    <span style="color:var(--text-muted); font-size: 0.85em;">📞 ${user.phone} | ✉️ ${user.email}</span><br>
-                                                                                                                                                    <span style="color:var(--text-muted); font-size: 0.85em;">💳 ${user.paymentMethod}</span><br>
-                                                                                                                                                    <span style="color:var(--accent); font-size: 0.85em;">🎮 ${user.games.length} Game(s): ${user.games.join(', ')}</span>
+                                                                                                                                    html += `<div class="category-block">
+                                                                                                                                                <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+                                                                                                                                                    <div>
+                                                                                                                                                        <b>${user.name}</b> <span style="color:var(--text-muted); font-size:0.9em;">(${user.course})</span><br>
+                                                                                                                                                        <span style="color:var(--text-muted); font-size: 0.85em;">📞 ${user.phone} | ✉️ ${user.email}</span><br>
+                                                                                                                                                        <span style="color:var(--text-muted); font-size: 0.85em;">💳 ${user.paymentMethod}</span><br>
+                                                                                                                                                        <span style="color:var(--accent); font-size: 0.85em;">🎮 ${user.games.length} Game(s): ${user.games.join(', ')}</span>
+                                                                                                                                                    </div>
+                                                                                                                                                    <button type="button" onclick="removeParticipant('${uid}')" style="background:transparent; border:none; color:var(--highlight); cursor:pointer; font-weight:bold; font-size:1.4em; padding:0 5px; line-height:1;" title="Remove Participant">&times;</button>
                                                                                                                                                 </div>
-                                                                                                                                                <button type="button" onclick="removeParticipant('${uid}')" style="background:transparent; border:none; color:var(--highlight); cursor:pointer; font-weight:bold; font-size:1.4em; padding:0 5px; line-height:1;" title="Remove Participant">&times;</button>
-                                                                                                                                            </div>
-                                                                                                                                        `);
-                                                                                                                                    });
+                                                                                                                                            </div>`;
                                                                                                                                 });
-
-                                                                let html = '';
-                                                                for (const [game, users] of Object.entries(categoryMap)) {
-                                                                    html += `<div class="category-block">
-                                                                                <h4>${game} <span style="float:right; color:var(--highlight);">${users.length}</span></h4>
-                                                                                <ul class="participant-list" style="list-style:none; padding-left:0;">
-                                                                                    ${users.map(u => `<li style="margin-bottom:10px; border-bottom:1px solid var(--border-color); padding-bottom:8px;">${u}</li>`).join('')}
-                                                                                </ul>
-                                                                            </div>`;
-                                                                }
-                                                                adminData.innerHTML = html;
+                                                                                                                                adminData.innerHTML = html;
                                                             }
                     </script>
 
