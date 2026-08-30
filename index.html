@@ -135,91 +135,93 @@
             }
 
             .day-group { margin-bottom: 40px; text-align: center; }
-                                    .day-title {
-                                        color: var(--text-main);
-                                        font-family: 'JetBrains Mono', monospace;
-                                        margin-bottom: 5px;
-                                        font-size: 1.1em;
-                                        text-transform: uppercase;
-                                        letter-spacing: 1px;
-                                        font-weight: 700;
-                                    }
+                                                .day-title {
+                                                    color: var(--text-main);
+                                                    font-family: 'JetBrains Mono', monospace;
+                                                    margin-bottom: 5px;
+                                                    font-size: 1.1em;
+                                                    text-transform: uppercase;
+                                                    letter-spacing: 1px;
+                                                    font-weight: 700;
+                                                }
 
-                                    .event-grid {
-                                        display: grid;
-                                        grid-template-columns: repeat(6, 1fr);
-                                        width: 326px; /* Forces exactly a 3-diameter row */
-                                        margin: 30px auto 10px auto;
-                                        column-gap: 4px;
-                                    }
-                                    .event-card {
-                                        background: var(--panel-bg);
-                                        grid-column: span 2;
-                                        width: 106px;
-                                        height: 122px;
-                                        clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
-                                        cursor: pointer;
-                                        transition: all 0.2s ease;
-                                        position: relative;
-                                        display: flex;
-                                        flex-direction: column;
-                                        justify-content: center;
-                                        align-items: center;
-                                        text-align: center;
-                                        padding: 20px 4px; /* Centers text in the widest part */
-                                        box-sizing: border-box;
-                                        margin-top: -30px; /* Pulls up to perfectly interlock rows */
-                                    }
+                                                .event-grid {
+                                                    display: grid;
+                                                    grid-template-columns: repeat(6, 1fr);
+                                                    width: 308px; /* Slightly narrower to fit smaller screens */
+                                                    margin: 25px auto 10px auto;
+                                                    column-gap: 4px;
+                                                }
+                                                .event-card {
+                                                    background: var(--panel-bg);
+                                                    grid-column: span 2;
+                                                    width: 100px;
+                                                    height: 115px;
+                                                    clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+                                                    cursor: pointer;
+                                                    transition: all 0.2s ease;
+                                                    position: relative;
+                                                    display: flex;
+                                                    flex-direction: column;
+                                                    justify-content: center;
+                                                    align-items: center;
+                                                    text-align: center;
+                                                    padding: 16px 2px; 
+                                                    box-sizing: border-box;
+                                                    margin-top: -28px; /* Precise interlock margin for 115px height */
+                                                }
                         
-                                    /* Honeycomb structure rule: shifts every 4th item to interlock */
-                                    .event-card:nth-child(5n + 4) { grid-column-start: 2; }
+                                                /* Honeycomb structure rule: shifts every 4th item to interlock */
+                                                .event-card:nth-child(5n + 4) { grid-column-start: 2; }
                         
-                                    .event-card:hover:not(.disabled) { 
-                                        background: var(--border-color);
-                                        transform: scale(1.05);
-                                        z-index: 10;
-                                    }
-                                    .event-card.selected {
-                                        background: var(--highlight);
-                                        z-index: 5;
-                                    }
-                                    .event-card.disabled { opacity: 0.4; cursor: not-allowed; filter: grayscale(100%); z-index: 1; }
-                                    .event-card h4 {
-                                        margin: 0 0 4px 0;
-                                        color: var(--text-main);
-                                        font-weight: 700;
-                                        font-size: 0.72em;
-                                        line-height: 1.1;
-                                        transition: color 0.2s;
-                                        word-wrap: break-word;
-                                    }
-                                    .event-time {
-                                        font-family: 'JetBrains Mono', monospace;
-                                        font-size: 0.65em;
-                                        color: var(--accent);
-                                        display: flex;
-                                        flex-direction: column;
-                                        align-items: center;
-                                        gap: 2px;
-                                        transition: color 0.2s;
-                                    }
-                                    .event-day-label {
-                                        margin-top: 4px;
-                                        font-size: 0.85em;
-                                        font-weight: 800;
-                                        color: var(--text-muted);
-                                        transition: color 0.2s;
-                                    }
+                                                .event-card:hover:not(.disabled) { 
+                                                    background: var(--border-color);
+                                                    transform: scale(1.05);
+                                                    z-index: 10;
+                                                }
+                                                .event-card.selected {
+                                                    background: var(--highlight);
+                                                    z-index: 5;
+                                                }
+                                                .event-card.disabled { opacity: 0.4; cursor: not-allowed; filter: grayscale(100%); z-index: 1; }
+                                                .event-card h4 {
+                                                    margin: 0 0 3px 0;
+                                                    color: var(--text-main);
+                                                    font-weight: 700;
+                                                    font-size: 0.65em; /* Scaled down slightly */
+                                                    line-height: 1.1;
+                                                    letter-spacing: -0.3px; /* Prevent long words from breaking layout */
+                                                    transition: color 0.2s;
+                                                    word-wrap: break-word;
+                                                    width: 100%;
+                                                }
+                                                .event-time {
+                                                    font-family: 'JetBrains Mono', monospace;
+                                                    font-size: 0.6em; /* Scaled down */
+                                                    color: var(--accent);
+                                                    display: flex;
+                                                    flex-direction: column;
+                                                    align-items: center;
+                                                    gap: 1px;
+                                                    transition: color 0.2s;
+                                                }
+                                                .event-day-label {
+                                                    margin-top: 2px;
+                                                    font-size: 0.8em;
+                                                    font-weight: 800;
+                                                    color: var(--text-muted);
+                                                    transition: color 0.2s;
+                                                }
             
-                                    /* Text changes on select to contrast with dark highlight */
-                                    .event-card.selected h4,
-                                    .event-card.selected .event-time,
-                                    .event-card.selected .event-time span,
-                                    .event-card.selected .event-day-label {
-                                        color: var(--bg-color) !important;
-                                    }
+                                                /* Text changes on select to contrast with dark highlight */
+                                                .event-card.selected h4,
+                                                .event-card.selected .event-time,
+                                                .event-card.selected .event-time span,
+                                                .event-card.selected .event-day-label {
+                                                    color: var(--bg-color) !important;
+                                                }
         
-                                    .event-checkbox { position: absolute; opacity: 0; cursor: pointer; height: 0; width: 0; }
+                                                .event-checkbox { position: absolute; opacity: 0; cursor: pointer; height: 0; width: 0; }
 
             .summary-panel {
                 background: var(--panel-bg);
