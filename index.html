@@ -16,17 +16,15 @@
                 --accent: #666666;
             }
 
-            @media (prefers-color-scheme: dark) {
-                :root {
-                    --bg-color: #000432;
-                    --panel-bg: #080c4a;
-                    --border-color: #15195c;
-                    --text-main: #e2e8f0;
-                    --text-muted: #818cf8;
-                    --highlight: #c7d2fe;
-                    --accent: #818cf8;
-                }
-            }
+            .dark-mode {
+                        --bg-color: #000432;
+                        --panel-bg: #080c4a;
+                        --border-color: #15195c;
+                        --text-main: #e2e8f0;
+                        --text-muted: #818cf8;
+                        --highlight: #c7d2fe;
+                        --accent: #818cf8;
+                    }
 
             body {
                 background-color: var(--bg-color);
@@ -247,20 +245,26 @@
                 color: var(--text-muted);
             }
             button.submit-btn:hover:not(:disabled) {
-                transform: translateY(-2px);
-                box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-            }
-        </style>
-</head>
+                        transform: translateY(-2px);
+                        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+                    }
+                </style>
+                <script>
+                    if (localStorage.getItem('techrootTheme') === 'dark' || (!localStorage.getItem('techrootTheme') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                        document.documentElement.classList.add('dark-mode');
+                    }
+                </script>
+            </head>
 <body>
 
 <div class="container">
     <h1>Techroot Registration</h1>
 
     <div class="nav-tabs">
-        <button type="button" id="btnReg" class="active">Register</button>
-        <button type="button" id="btnAdmin">Dashboard</button>
-    </div>
+            <button type="button" id="btnReg" class="active">Register</button>
+            <button type="button" id="btnAdmin">Dashboard</button>
+            <button type="button" id="themeToggle" style="flex: 0 0 auto; width: 45px; padding: 0; display: flex; justify-content: center; align-items: center; font-size: 1.2em;" title="Toggle Theme">🌓</button>
+        </div>
 
     <div id="adminPanel" class="admin-panel">
         <h2>Participants by Game</h2>
@@ -364,6 +368,12 @@
 </div>
 
 <script>
+    document.getElementById('themeToggle').addEventListener('click', () => {
+        document.documentElement.classList.toggle('dark-mode');
+        const isDark = document.documentElement.classList.contains('dark-mode');
+        localStorage.setItem('techrootTheme', isDark ? 'dark' : 'light');
+    });
+
     const checkboxes = document.querySelectorAll('.event-checkbox');
     const priceDisplay = document.getElementById('totalPrice');
     const selectionText = document.getElementById('selectionText');
