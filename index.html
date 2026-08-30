@@ -267,10 +267,13 @@
         </div>
 
     <div id="adminPanel" class="admin-panel">
-        <h2>Participants by Game</h2>
-        <div id="adminData">No participants yet.</div>
-                <button type="button" class="submit-btn" style="margin-top:20px; background:var(--accent); color:var(--bg-color);" onclick="localStorage.removeItem('techrootData'); location.reload();">Clear All Data</button>
-            </div>
+            <h2>Participants by Game</h2>
+            <div id="adminData">No participants yet.</div>
+                    <div style="display: flex; gap: 10px; margin-top:20px;">
+                        <button type="button" class="submit-btn" style="margin-top:0; background:var(--accent); color:var(--bg-color);" onclick="if(confirm('Clear all data?')) { localStorage.removeItem('techrootData'); location.reload(); }">Clear All Data</button>
+                        <button type="button" id="undoBtn" class="submit-btn" style="margin-top:0; background:var(--highlight); color:var(--bg-color); display:none;" onclick="undoRemove()">Undo Remove</button>
+                    </div>
+                </div>
 
     <form id="registrationForm" class="form-panel">
         <h2>Student Info</h2>
@@ -456,15 +459,16 @@
         e.preventDefault();
         
         // Example: Gather payload for Firebase
-                const formData = {
-                    name: document.getElementById('name').value,
-                    email: document.getElementById('email').value,
-                    phone: document.getElementById('phone').value,
-                    course: document.getElementById('course').value,
-                    games: Array.from(checkboxes).filter(c => c.checked).map(c => c.value),
-                    paymentMethod: document.querySelector('input[name="paymentMethod"]:checked').value,
-                    totalPaid: document.getElementById('totalPrice').textContent
-                };
+                        const formData = {
+                            id: Date.now(),
+                            name: document.getElementById('name').value,
+                            email: document.getElementById('email').value,
+                            phone: document.getElementById('phone').value,
+                            course: document.getElementById('course').value,
+                            games: Array.from(checkboxes).filter(c => c.checked).map(c => c.value),
+                            paymentMethod: document.querySelector('input[name="paymentMethod"]:checked').value,
+                            totalPaid: document.getElementById('totalPrice').textContent
+                        };
 
                 console.log("Data ready for Firebase: ", formData);
         
@@ -501,42 +505,86 @@
             });
 
             btnAdmin.addEventListener('click', () => {
-                btnAdmin.classList.add('active');
-                btnReg.classList.remove('active');
-                formPanel.classList.add('hidden');
-                adminPanel.classList.add('active');
-                renderAdmin();
-            });
-
-            function renderAdmin() {
-                            const data = JSON.parse(localStorage.getItem('techrootData') || '[]');
-                            const adminData = document.getElementById('adminData');
-        
-                            if (data.length === 0) {
-                                adminData.innerHTML = "<p style='text-align:center; color:var(--text-muted);'>No participants registered yet.</p>";
-                                return;
+                            if (!adminPanel.classList.contains('active')) {
+                                const pwd = prompt("Enter Dashboard Password (hint: admin):");
+                                if (pwd !== "admin") {
+                                    alert("Incorrect Password!");
+                                    return;
+                                }
                             }
+                            btnAdmin.classList.add('active');
+                            btnReg.classList.remove('active');
+                            formPanel.classList.add('hidden');
+                            adminPanel.classList.add('active');
+                            renderAdmin();
+                        });
 
-                            const categoryMap = {};
-                            data.forEach(user => {
-                                user.games.forEach(game => {
-                                    if (!categoryMap[game]) categoryMap[game] = [];
-                                    categoryMap[game].push(`<b>${user.name}</b> <span style="color:var(--text-muted);">(${user.course})</span><br><span style="color:var(--accent); font-size: 0.9em;">${user.phone}</span>`);
-                                });
-                            });
+                        let deleteHistory = [];
 
-                            let html = '';
-                            for (const [game, users] of Object.entries(categoryMap)) {
-                                html += `<div class="category-block">
-                                            <h4>${game} <span style="float:right; color:var(--highlight);">${users.length}</span></h4>
-                                            <ul class="participant-list">
-                                                ${users.map(u => `<li>${u}</li>`).join('')}
-                                            </ul>
-                                        </div>`;
+                        function removeParticipant(id) {
+                            if(!confirm("Remove this participant?")) return;
+                            let data = JSON.parse(localStorage.getItem('techrootData') || '[]');
+                            const index = data.findIndex(u => String(u.id) === String(id) || String(u.phone) === String(id));
+                            if (index > -1) {
+                                deleteHistory.push({ item: data[index], index: index });
+                                data.splice(index, 1);
+                                localStorage.setItem('techrootData', JSON.stringify(data));
+                                renderAdmin();
                             }
-                            adminData.innerHTML = html;
                         }
-        </script>
+
+                        function undoRemove() {
+                            if (deleteHistory.length === 0) return;
+                            let data = JSON.parse(localStorage.getItem('techrootData') || '[]');
+                            const restored = deleteHistory.pop();
+                            data.splice(restored.index, 0, restored.item);
+                            localStorage.setItem('techrootData', JSON.stringify(data));
+                            renderAdmin();
+                        }
+
+                        function renderAdmin() {
+                                        const data = JSON.parse(localStorage.getItem('techrootData') || '[]');
+                                        const adminData = document.getElementById('adminData');
+                                        const undoBtn = document.getElementById('undoBtn');
+                            
+                                        if (undoBtn) {
+                                            undoBtn.style.display = deleteHistory.length > 0 ? 'block' : 'none';
+                                        }
+        
+                                        if (data.length === 0) {
+                                            adminData.innerHTML = "<p style='text-align:center; color:var(--text-muted);'>No participants registered yet.</p>";
+                                            return;
+                                        }
+
+                                        const categoryMap = {};
+                                        data.forEach(user => {
+                                            const uid = user.id || user.phone;
+                                            user.games.forEach(game => {
+                                                if (!categoryMap[game]) categoryMap[game] = [];
+                                                categoryMap[game].push(`
+                                                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                                                        <div>
+                                                            <b>${user.name}</b> <span style="color:var(--text-muted);">(${user.course})</span><br>
+                                                            <span style="color:var(--accent); font-size: 0.9em;">${user.phone}</span>
+                                                        </div>
+                                                        <button type="button" onclick="removeParticipant('${uid}')" style="background:transparent; border:none; color:var(--highlight); cursor:pointer; font-weight:bold; font-size:1.4em; padding:0 5px;" title="Remove Participant">&times;</button>
+                                                    </div>
+                                                `);
+                                            });
+                                        });
+
+                                        let html = '';
+                                        for (const [game, users] of Object.entries(categoryMap)) {
+                                            html += `<div class="category-block">
+                                                        <h4>${game} <span style="float:right; color:var(--highlight);">${users.length}</span></h4>
+                                                        <ul class="participant-list" style="list-style:none; padding-left:0;">
+                                                            ${users.map(u => `<li style="margin-bottom:10px; border-bottom:1px solid var(--border-color); padding-bottom:8px;">${u}</li>`).join('')}
+                                                        </ul>
+                                                    </div>`;
+                                        }
+                                        adminData.innerHTML = html;
+                                    }
+                    </script>
 
 </body>
 </html>
