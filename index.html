@@ -245,10 +245,31 @@
                 color: var(--text-muted);
             }
             button.submit-btn:hover:not(:disabled) {
-                        transform: translateY(-2px);
-                        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-                    }
-                </style>
+                                    transform: translateY(-2px);
+                                    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+                                }
+
+                        /* Pattern Lock Styles */
+                        #patternOverlay {
+                            display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 999;
+                            justify-content: center; align-items: center; backdrop-filter: blur(5px);
+                        }
+                        #patternOverlay.active { display: flex; }
+                        .pattern-box {
+                            background: var(--bg-color); padding: 30px; border-radius: 20px; border: 1px solid var(--border-color); text-align: center;
+                            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+                        }
+                        .pattern-grid {
+                            display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin: 20px auto; width: max-content; touch-action: none;
+                        }
+                        .pattern-dot {
+                            width: 50px; height: 50px; border-radius: 50%; background: var(--panel-bg); border: 2px solid var(--border-color); cursor: pointer; transition: 0.1s;
+                        }
+                        .pattern-dot.active {
+                            background: var(--highlight); border-color: var(--highlight); transform: scale(1.15); box-shadow: 0 0 15px var(--highlight);
+                        }
+                        .pattern-msg { color: var(--text-main); font-weight: 700; margin-bottom: 10px; font-family: 'Open Sans', sans-serif; font-size: 1.1em; }
+                            </style>
                 <script>
                     if (localStorage.getItem('techrootTheme') === 'dark' || (!localStorage.getItem('techrootTheme') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
                         document.documentElement.classList.add('dark-mode');
@@ -269,11 +290,12 @@
     <div id="adminPanel" class="admin-panel">
             <h2>Participants by Game</h2>
             <div id="adminData">No participants yet.</div>
-                    <div style="display: flex; gap: 10px; margin-top:20px;">
-                        <button type="button" class="submit-btn" style="margin-top:0; background:var(--accent); color:var(--bg-color);" onclick="if(confirm('Clear all data?')) { localStorage.removeItem('techrootData'); location.reload(); }">Clear All Data</button>
-                        <button type="button" id="undoBtn" class="submit-btn" style="margin-top:0; background:var(--highlight); color:var(--bg-color); display:none;" onclick="undoRemove()">Undo Remove</button>
-                    </div>
-                </div>
+                    <div style="display: flex; gap: 10px; margin-top:20px; flex-wrap: wrap;">
+                                        <button type="button" class="submit-btn" style="margin-top:0; background:var(--accent); color:var(--bg-color); flex: 1;" onclick="if(confirm('Clear all data?')) { localStorage.removeItem('techrootData'); location.reload(); }">Clear Data</button>
+                                        <button type="button" id="undoBtn" class="submit-btn" style="margin-top:0; background:var(--highlight); color:var(--bg-color); display:none; flex: 1;" onclick="undoRemove()">Undo</button>
+                                        <button type="button" class="submit-btn" style="margin-top:0; background:transparent; color:var(--text-main); border: 1px solid var(--border-color); flex: 1;" onclick="openPatternLock('set1')">Set Pattern</button>
+                                    </div>
+                                </div>
 
     <form id="registrationForm" class="form-panel">
         <h2>Student Info</h2>
@@ -367,8 +389,26 @@
         </div>
 
         <button type="submit" class="submit-btn" id="submitBtn" disabled>Complete Registration</button>
-    </form>
-</div>
+            </form>
+
+            <div id="patternOverlay">
+                <div class="pattern-box">
+                    <div class="pattern-msg" id="patternMsg">Draw Pattern</div>
+                    <div class="pattern-grid" id="patternGrid">
+                        <div class="pattern-dot" data-val="1"></div>
+                        <div class="pattern-dot" data-val="2"></div>
+                        <div class="pattern-dot" data-val="3"></div>
+                        <div class="pattern-dot" data-val="4"></div>
+                        <div class="pattern-dot" data-val="5"></div>
+                        <div class="pattern-dot" data-val="6"></div>
+                        <div class="pattern-dot" data-val="7"></div>
+                        <div class="pattern-dot" data-val="8"></div>
+                        <div class="pattern-dot" data-val="9"></div>
+                    </div>
+                    <button type="button" class="submit-btn" style="margin-top:10px; padding: 12px; background:var(--panel-bg); color:var(--text-main);" onclick="closePattern()">Cancel</button>
+                </div>
+            </div>
+        </div>
 
 <script>
     document.getElementById('themeToggle').addEventListener('click', () => {
@@ -506,18 +546,128 @@
 
             btnAdmin.addEventListener('click', () => {
                             if (!adminPanel.classList.contains('active')) {
-                                const pwd = prompt("Enter Dashboard Password (hint: admin):");
-                                if (pwd !== "admin") {
-                                    alert("Incorrect Password!");
+                                if (!localStorage.getItem('adminPattern')) {
+                                    alert("No Admin Pattern set. Please configure one now.");
+                                    openPatternLock('set1', true);
                                     return;
                                 }
+                                openPatternLock('login');
                             }
+                        });
+
+                        function openDashboardDirect() {
                             btnAdmin.classList.add('active');
                             btnReg.classList.remove('active');
                             formPanel.classList.add('hidden');
                             adminPanel.classList.add('active');
                             renderAdmin();
+                        }
+
+                        // Pattern Lock Logic
+                        const patternGrid = document.getElementById('patternGrid');
+                        const patternMsg = document.getElementById('patternMsg');
+                        const patternOverlay = document.getElementById('patternOverlay');
+                        let currentPattern = [];
+                        let isDrawingPattern = false;
+                        let patternMode = 'login'; 
+                        let tempPattern = '';
+                        let forceLoginAfterSet = false;
+            
+                        function openPatternLock(mode, forceLogin = false) {
+                            patternMode = mode;
+                            forceLoginAfterSet = forceLogin;
+                            currentPattern = [];
+                            patternMsg.innerText = mode === 'login' ? "Draw Pattern to Unlock" : "Draw New Pattern";
+                            patternMsg.style.color = "var(--text-main)";
+                            document.querySelectorAll('.pattern-dot').forEach(d => d.classList.remove('active'));
+                            patternOverlay.classList.add('active');
+                        }
+
+                        function closePattern() {
+                            patternOverlay.classList.remove('active');
+                        }
+
+                        patternGrid.addEventListener('pointerdown', (e) => {
+                            isDrawingPattern = true;
+                            currentPattern = [];
+                            document.querySelectorAll('.pattern-dot').forEach(d => d.classList.remove('active'));
+                            handlePointerPattern(e);
                         });
+
+                        window.addEventListener('pointermove', (e) => {
+                            if (!isDrawingPattern) return;
+                            handlePointerPattern(e);
+                        });
+
+                        window.addEventListener('pointerup', () => {
+                            if (!isDrawingPattern) return;
+                            isDrawingPattern = false;
+                            processPatternFinished();
+                        });
+
+                        function handlePointerPattern(e) {
+                            const el = document.elementFromPoint(e.clientX, e.clientY);
+                            if (el && el.classList.contains('pattern-dot')) {
+                                const val = el.getAttribute('data-val');
+                                if (!currentPattern.includes(val)) {
+                                    currentPattern.push(val);
+                                    el.classList.add('active');
+                                    if (navigator.vibrate) navigator.vibrate(20);
+                                }
+                            }
+                        }
+
+                        function processPatternFinished() {
+                            if (currentPattern.length < 4) {
+                                patternMsg.innerText = "Connect at least 4 dots";
+                                patternMsg.style.color = "#ff003c";
+                                setTimeout(() => {
+                                    document.querySelectorAll('.pattern-dot').forEach(d => d.classList.remove('active'));
+                                    patternMsg.innerText = patternMode === 'login' ? "Draw Pattern to Unlock" : (patternMode === 'set1' ? "Draw New Pattern" : "Confirm Pattern");
+                                    patternMsg.style.color = "var(--text-main)";
+                                }, 1000);
+                                return;
+                            }
+
+                            const patternStr = currentPattern.join('');
+                
+                            if (patternMode === 'login') {
+                                const saved = localStorage.getItem('adminPattern');
+                                if (patternStr === saved) {
+                                    closePattern();
+                                    openDashboardDirect();
+                                } else {
+                                    patternMsg.innerText = "Incorrect Pattern";
+                                    patternMsg.style.color = "#ff003c";
+                                    setTimeout(() => {
+                                        document.querySelectorAll('.pattern-dot').forEach(d => d.classList.remove('active'));
+                                        patternMsg.innerText = "Draw Pattern to Unlock";
+                                        patternMsg.style.color = "var(--text-main)";
+                                    }, 1000);
+                                }
+                            } else if (patternMode === 'set1') {
+                                tempPattern = patternStr;
+                                patternMode = 'set2';
+                                patternMsg.innerText = "Draw Pattern Again to Confirm";
+                                document.querySelectorAll('.pattern-dot').forEach(d => d.classList.remove('active'));
+                            } else if (patternMode === 'set2') {
+                                if (patternStr === tempPattern) {
+                                    localStorage.setItem('adminPattern', patternStr);
+                                    alert("Pattern updated successfully!");
+                                    closePattern();
+                                    if(forceLoginAfterSet) openDashboardDirect();
+                                } else {
+                                    patternMsg.innerText = "Patterns do not match. Try again.";
+                                    patternMsg.style.color = "#ff003c";
+                                    patternMode = 'set1';
+                                    setTimeout(() => {
+                                        document.querySelectorAll('.pattern-dot').forEach(d => d.classList.remove('active'));
+                                        patternMsg.innerText = "Draw New Pattern";
+                                        patternMsg.style.color = "var(--text-main)";
+                                    }, 1000);
+                                }
+                            }
+                        }
 
                         let deleteHistory = [];
 
