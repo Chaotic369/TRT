@@ -411,6 +411,25 @@
         </div>
 
 <script>
+    // Import the functions you need from the SDKs you need
+    // import { initializeApp } from "firebase/app"; // Commented out per strict rule: environment does not use modules
+    
+    // TODO: Add SDKs for Firebase products that you want to use
+    // https://firebase.google.com/docs/web/setup#available-libraries
+    
+    // Your web app's Firebase configuration
+    const firebaseConfig = {
+        apiKey: "AIzaSyAoIBSunV1NJVJEuFeI7KkEuOHseeqkjnk",
+        authDomain: "techroot-11e5d.firebaseapp.com",
+        projectId: "techroot-11e5d",
+        storageBucket: "techroot-11e5d.firebasestorage.app",
+        messagingSenderId: "573946339240",
+        appId: "1:573946339240:web:aeeb930b634fde4297479d"
+    };
+    
+    // Initialize Firebase
+    // const app = initializeApp(firebaseConfig); // Commented out to prevent reference errors until SDK is loaded
+
     document.getElementById('themeToggle').addEventListener('click', () => {
         document.documentElement.classList.toggle('dark-mode');
         const isDark = document.documentElement.classList.contains('dark-mode');
