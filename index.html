@@ -892,12 +892,12 @@
                                                                 }
 
                                                                 let html = '';
-                                                                                                                                data.forEach(user => {
+                                                                                                                                data.forEach((user, idx) => {
                                                                                                                                     const uid = user.firebaseKey || user.id || user.phone;
                                                                                                                                     html += `<div class="category-block">
                                                                                                                                                 <div style="display:flex; justify-content:space-between; align-items:flex-start;">
                                                                                                                                                     <div>
-                                                                                                                                                        <b>${user.name}</b> <span style="color:var(--text-muted); font-size:0.9em;">(${user.course})</span><br>
+                                                                                                                                                        <span style="color:var(--text-muted); font-size:0.85em; font-family:'JetBrains Mono',monospace;">#${idx + 1}</span> <b>${user.name}</b> <span style="color:var(--text-muted); font-size:0.9em;">(${user.course})</span><br>
                                                                                                                                                         <span style="color:var(--text-muted); font-size: 0.85em;">📞 ${user.phone} | ✉️ ${user.email}</span><br>
                                                                                                                                                         <span style="color:var(--text-muted); font-size: 0.85em;">💳 ${user.paymentMethod}</span><br>
                                                                                                                                                         <span style="color:var(--accent); font-size: 0.85em;">🎮 ${user.games.length} Game(s): ${user.games.join(', ')}</span>
