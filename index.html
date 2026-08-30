@@ -146,15 +146,16 @@
                                                 }
 
                                                 .event-grid {
-                                                    display: grid;
-                                                    grid-template-columns: repeat(6, 1fr);
-                                                    width: 308px; /* Slightly narrower to fit smaller screens */
-                                                    margin: 25px auto 10px auto;
-                                                    column-gap: 4px;
-                                                }
+                                                                                                    display: flex;
+                                                                                                    flex-wrap: wrap;
+                                                                                                    justify-content: center;
+                                                                                                    width: 308px;
+                                                                                                    margin: 25px auto 10px auto;
+                                                                                                    gap: 0 4px;
+                                                                                                }
                                                 .event-card {
                                                     background: var(--panel-bg);
-                                                    grid-column: span 2;
+                                                    
                                                     width: 100px;
                                                     height: 115px;
                                                     clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
@@ -171,8 +172,7 @@
                                                     margin-top: -28px; /* Precise interlock margin for 115px height */
                                                 }
                         
-                                                /* Honeycomb structure rule: shifts every 4th item to interlock */
-                                                .event-card:nth-child(5n + 4) { grid-column-start: 2; }
+                                                
                         
                                                 .event-card:hover:not(.disabled) { 
                                                     background: var(--border-color);
