@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Techroot Event Registration</title>
     <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css">
         <style>
             :root {
                 --bg-color: #fbfaf6;
@@ -324,6 +325,19 @@
                                                     background: var(--highlight); transform: scale(1.5); box-shadow: 0 0 10px var(--highlight);
                                                 }
                                                 .pattern-msg { color: var(--text-main); font-weight: 700; margin-bottom: 10px; font-family: 'Open Sans', sans-serif; font-size: 1.1em; }
+
+                                                                        #cropOverlay {
+                                                                            display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 1000;
+                                                                            justify-content: center; align-items: center; backdrop-filter: blur(5px);
+                                                                        }
+                                                                        #cropOverlay.active { display: flex; }
+                                                                        .crop-box {
+                                                                            background: var(--bg-color); padding: 24px; border-radius: 20px;
+                                                                            border: 1px solid var(--border-color); text-align: center; max-width: 320px; width: 90%;
+                                                                        }
+                                                                        .crop-box h3 { margin: 0 0 16px 0; font-size: 1em; color: var(--text-main); }
+                                                                        #cropImgEl { max-width: 100%; max-height: 260px; display: block; }
+                                                                        .crop-actions { display: flex; gap: 10px; margin-top: 16px; }
                             </style>
                 <script>
                     if (localStorage.getItem('techrootTheme') === 'dark' || (!localStorage.getItem('techrootTheme') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
@@ -349,8 +363,24 @@
                                         <button type="button" class="submit-btn" style="margin-top:0; background:var(--accent); color:var(--bg-color); flex: 1;" onclick="if(confirm('Clear all data?')) { fetch('https://techroot-11e5d-default-rtdb.firebaseio.com/registrations.json', {method:'DELETE'}).catch(e=>console.error(e)); fetch('https://techroot-11e5d-default-rtdb.firebaseio.com/settings/pattern.json', {method:'DELETE'}).catch(e=>console.error(e)); localStorage.removeItem('techrootData'); localStorage.removeItem('adminPattern'); location.reload(); }">Clear Data</button>
                                         <button type="button" id="undoBtn" class="submit-btn" style="margin-top:0; background:var(--highlight); color:var(--bg-color); display:none; flex: 1;" onclick="undoRemove()">Undo</button>
                                         <button type="button" class="submit-btn" style="margin-top:0; background:transparent; color:var(--text-main); border: 1px solid var(--border-color); flex: 1;" onclick="openPatternLock('set1')">Set Pattern</button>
-                                    </div>
-                                </div>
+                                                                            </div>
+                                                                            <div style="margin-top: 20px; background: var(--panel-bg); padding: 16px; border-radius: 16px;">
+                                                                                <h4 style="margin: 0 0 12px 0; font-size: 0.95em; color: var(--text-main); font-family: 'JetBrains Mono', monospace; text-transform: uppercase; letter-spacing: 0.5px;">UPI Payment Settings</h4>
+                                                                                <div class="form-group" style="margin-bottom: 10px;">
+                                                                                    <label style="font-size: 0.85em;">UPI ID</label>
+                                                                                    <input type="text" id="adminUpiId" placeholder="e.g. techroot@upi" style="width:100%; padding:10px; background:var(--bg-color); border:none; color:var(--text-main); border-radius:10px; font-family:'Open Sans',sans-serif; font-size:0.9em; box-sizing:border-box;">
+                                                                                </div>
+                                                                                <div class="form-group" style="margin-bottom: 10px;">
+                                                                                    <label style="font-size: 0.85em;">QR Code Image</label>
+                                                                                    <input type="file" id="adminQrUpload" accept="image/*" style="display:none;" onchange="handleQrUpload(event)">
+                                                                                    <button type="button" class="submit-btn" style="margin-top:0; padding:10px; font-size:0.85em; background:var(--panel-bg); color:var(--text-main); border:1px solid var(--border-color);" onclick="document.getElementById('adminQrUpload').click()">Upload QR Image</button>
+                                                                                </div>
+                                                                                <div id="qrPreviewAdmin" style="margin-top:8px; display:none; text-align:center;">
+                                                                                    <img id="qrPreviewImg" style="width:100px; height:100px; object-fit:contain; border-radius:10px; border:1px solid var(--border-color);">
+                                                                                </div>
+                                                                                <button type="button" class="submit-btn" style="margin-top:12px; padding:10px; font-size:0.9em;" onclick="saveUpiSettings()">Save UPI Settings</button>
+                                                                            </div>
+                                                                        </div>
 
     <form id="registrationForm" class="form-panel">
         <h2>Student Info</h2>
@@ -435,12 +465,12 @@
             </div>
 
             <div class="upi-details" id="upiSection">
-                            <p style="color:var(--accent); font-weight:600;">Scan QR to Pay via UPI</p>
-                            <div style="width: 150px; height: 150px; background: #fff; margin: 0 auto; display: flex; align-items: center; justify-content: center; color: #000; font-weight: bold;">
-                                [ QR CODE ]
-                            </div>
-                            <p style="font-size: 0.9em; margin-top:10px; color:var(--text-muted);">UPI ID: techroot@college</p>
-                        </div>
+                                        <p style="color:var(--accent); font-weight:600;">Scan QR to Pay via UPI</p>
+                                        <div id="qrDisplayArea" style="width: 150px; height: 150px; background: #fff; margin: 0 auto; display: flex; align-items: center; justify-content: center; color: #000; font-weight: bold; border-radius: 10px; overflow: hidden;">
+                                            [ QR CODE ]
+                                        </div>
+                                        <p id="upiIdDisplay" style="font-size: 0.9em; margin-top:10px; color:var(--text-muted);">UPI ID: techroot@college</p>
+                                    </div>
         </div>
 
         <button type="submit" class="submit-btn" id="submitBtn" disabled>Complete Registration</button>
@@ -461,12 +491,24 @@
                         <div class="pattern-dot" data-val="9"></div>
                     </div>
                     <button type="button" class="submit-btn" style="margin-top:10px; padding: 12px; background:var(--panel-bg); color:var(--text-main);" onclick="closePattern()">Cancel</button>
-                </div>
-            </div>
-        </div>
+                                    </div>
+                                </div>
+                            </div>
 
-<script>
-    // Import the functions you need from the SDKs you need
+                            <div id="cropOverlay">
+                                <div class="crop-box">
+                                    <h3>Crop QR Code</h3>
+                                    <img id="cropImgEl" src="">
+                                    <div class="crop-actions">
+                                        <button type="button" class="submit-btn" style="margin-top:0; padding:12px; background:var(--panel-bg); color:var(--text-main);" onclick="closeCropOverlay()">Cancel</button>
+                                        <button type="button" class="submit-btn" style="margin-top:0; padding:12px;" onclick="applyCrop()">Crop & Use</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
+                    <script>
+                        // Import the functions you need from the SDKs you need
     // import { initializeApp } from "firebase/app"; // Commented out per strict rule: environment does not use modules
     
     // TODO: Add SDKs for Firebase products that you want to use
@@ -686,12 +728,13 @@
                                     });
 
                         function openDashboardDirect() {
-                            btnAdmin.classList.add('active');
-                            btnReg.classList.remove('active');
-                            formPanel.classList.add('hidden');
-                            adminPanel.classList.add('active');
-                            renderAdmin();
-                        }
+                                                    btnAdmin.classList.add('active');
+                                                    btnReg.classList.remove('active');
+                                                    formPanel.classList.add('hidden');
+                                                    adminPanel.classList.add('active');
+                                                    renderAdmin();
+                                                    loadUpiSettings();
+                                                }
 
                         // Pattern Lock Logic
                         const patternGrid = document.getElementById('patternGrid');
@@ -908,7 +951,100 @@
                                                                                                                                 });
                                                                                                                                 adminData.innerHTML = html;
                                                             }
-                    </script>
+                    // UPI Settings Functions
+                                            function loadUpiSettings() {
+                                                const upiId = localStorage.getItem('techrootUpiId');
+                                                const qrData = localStorage.getItem('techrootQrCode');
+                                                const upiIdDisplay = document.getElementById('upiIdDisplay');
+                                                const qrDisplayArea = document.getElementById('qrDisplayArea');
+                                                const adminUpiInput = document.getElementById('adminUpiId');
+                                                const qrPreviewAdmin = document.getElementById('qrPreviewAdmin');
+                                                const qrPreviewImg = document.getElementById('qrPreviewImg');
+                                                if (upiId) {
+                                                    if (upiIdDisplay) upiIdDisplay.textContent = 'UPI ID: ' + upiId;
+                                                    if (adminUpiInput) adminUpiInput.value = upiId;
+                                                }
+                                                if (qrData) {
+                                                    if (qrDisplayArea) {
+                                                        qrDisplayArea.innerHTML = '';
+                                                        const img = document.createElement('img');
+                                                        img.src = qrData;
+                                                        img.style.cssText = 'width:100%;height:100%;object-fit:contain;';
+                                                        qrDisplayArea.appendChild(img);
+                                                    }
+                                                    if (qrPreviewImg) qrPreviewImg.src = qrData;
+                                                    if (qrPreviewAdmin) qrPreviewAdmin.style.display = 'block';
+                                                }
+                                            }
 
-</body>
+                                            async function saveUpiSettings() {
+                                                const upiId = document.getElementById('adminUpiId').value.trim();
+                                                const cropped = localStorage.getItem('techrootQrCodeCropped');
+                                                if (upiId) localStorage.setItem('techrootUpiId', upiId);
+                                                if (cropped) {
+                                                    localStorage.setItem('techrootQrCode', cropped);
+                                                    localStorage.removeItem('techrootQrCodeCropped');
+                                                }
+                                                const qrData = localStorage.getItem('techrootQrCode');
+                                                try {
+                                                    await fetch("https://techroot-11e5d-default-rtdb.firebaseio.com/settings/upi.json", {
+                                                        method: "PUT",
+                                                        headers: { "Content-Type": "application/json" },
+                                                        body: JSON.stringify({ upiId: upiId, qrCode: qrData })
+                                                    });
+                                                } catch(e) { console.error("Firebase UPI Save Error:", e); }
+                                                loadUpiSettings();
+                                                alert("UPI settings saved!");
+                                            }
+
+                                            let cropperInstance = null;
+
+                                            function handleQrUpload(event) {
+                                                const file = event.target.files[0];
+                                                if (!file) return;
+                                                const reader = new FileReader();
+                                                reader.onload = function(e) {
+                                                    const cropImg = document.getElementById('cropImgEl');
+                                                    cropImg.src = e.target.result;
+                                                    document.getElementById('cropOverlay').classList.add('active');
+                                                    if (cropperInstance) { cropperInstance.destroy(); cropperInstance = null; }
+                                                    cropperInstance = new Cropper(cropImg, { aspectRatio: 1, viewMode: 2, autoCropArea: 0.9 });
+                                                };
+                                                reader.readAsDataURL(file);
+                                            }
+
+                                            function applyCrop() {
+                                                if (!cropperInstance) return;
+                                                const canvas = cropperInstance.getCroppedCanvas({ width: 300, height: 300 });
+                                                const croppedData = canvas.toDataURL('image/png');
+                                                localStorage.setItem('techrootQrCodeCropped', croppedData);
+                                                const qrPreviewImg = document.getElementById('qrPreviewImg');
+                                                const qrPreviewAdmin = document.getElementById('qrPreviewAdmin');
+                                                if (qrPreviewImg) qrPreviewImg.src = croppedData;
+                                                if (qrPreviewAdmin) qrPreviewAdmin.style.display = 'block';
+                                                closeCropOverlay();
+                                            }
+
+                                            function closeCropOverlay() {
+                                                document.getElementById('cropOverlay').classList.remove('active');
+                                                if (cropperInstance) { cropperInstance.destroy(); cropperInstance = null; }
+                                                document.getElementById('adminQrUpload').value = '';
+                                            }
+
+                                            (async function initUpiSettings() {
+                                                try {
+                                                    const res = await fetch("https://techroot-11e5d-default-rtdb.firebaseio.com/settings/upi.json");
+                                                    if (res.ok) {
+                                                        const data = await res.json();
+                                                        if (data) {
+                                                            if (data.upiId) localStorage.setItem('techrootUpiId', data.upiId);
+                                                            if (data.qrCode) localStorage.setItem('techrootQrCode', data.qrCode);
+                                                        }
+                                                    }
+                                                } catch(e) { console.error("Firebase UPI Load Error:", e); }
+                                                loadUpiSettings();
+                                            })();
+                                        </script>
+
+                    </body>
 </html>
