@@ -6,144 +6,173 @@
     <title>Techroot Event Registration</title>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Rajdhani:wght@400;600&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --bg-color: #050505;
-            --panel-bg: #111;
-            --neon-red: #ff003c;
-            --neon-green: #00ff00;
-            --neon-yellow: #ffae00;
-            --text-main: #f0f0f0;
-            --text-muted: #888;
-        }
+            :root {
+                --bg-color: #121218;
+                --panel-bg: #1e1e26;
+                --neon-red: #ff003c;
+                --neon-green: #00ff00;
+                --neon-yellow: #ffae00;
+                --text-main: #f0f0f0;
+                --text-muted: #aaa;
+            }
 
-        body {
-            background-color: var(--bg-color);
-            color: var(--text-main);
-            font-family: 'Rajdhani', sans-serif;
-            margin: 0;
-            padding: 20px;
-            box-sizing: border-box;
-        }
+            body {
+                        background-color: var(--bg-color);
+                        background-image: 
+                            linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+                            linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+                        background-size: 20px 20px;
+                        color: var(--text-main);
+                        font-family: 'Rajdhani', sans-serif;
+                        margin: 0;
+                        padding: 10px;
+                        box-sizing: border-box;
+                        min-height: 100vh;
+                    }
 
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-            background: var(--panel-bg);
-            padding: 30px;
-            border-radius: 12px;
-            border: 1px solid #333;
-            box-shadow: 0 0 20px rgba(255, 0, 60, 0.1);
-        }
+                .container {
+                    width: 100%;
+                    max-width: 500px;
+                    margin: 0 auto;
+                    background: var(--panel-bg);
+                    padding: 15px;
+                    border-radius: 8px;
+                    border: 1px solid #222;
+                }
 
-        h1, h2, h3 {
-            font-family: 'Orbitron', sans-serif;
-            text-align: center;
-            text-transform: uppercase;
-        }
+                /* Nav Tabs */
+                .nav-tabs { display: flex; gap: 8px; margin-bottom: 20px; }
+                .nav-tabs button { flex: 1; padding: 12px; background: #222; color: #fff; border: none; border-radius: 6px; font-family: 'Orbitron', sans-serif; cursor: pointer; font-size: 1em; text-transform: uppercase; transition: 0.2s; }
+                .nav-tabs button.active { background: var(--neon-red); font-weight: bold; }
+        
+                /* Dashboard Views */
+                .admin-panel { display: none; }
+                .admin-panel.active { display: block; }
+                .form-panel.hidden { display: none; }
+                .category-block { background: #0a0a0a; margin-bottom: 12px; padding: 12px; border-radius: 6px; border-left: 4px solid var(--neon-yellow); border: 1px solid #222; border-left: 4px solid var(--neon-yellow); }
+                .category-block h4 { margin: 0 0 8px 0; color: var(--neon-green); font-family: 'Orbitron', sans-serif; font-size: 1.1em; border-bottom: 1px dashed #333; padding-bottom: 6px; }
+                .participant-list { font-size: 0.95em; color: #ccc; margin: 0; padding-left: 20px; }
+                .participant-list li { margin-bottom: 6px; }
 
-        h1 {
-            color: var(--neon-red);
-            text-shadow: 0 0 10px rgba(255, 0, 60, 0.5);
-            margin-bottom: 30px;
-        }
+                h1, h2, h3 {
+                    font-family: 'Orbitron', sans-serif;
+                    text-align: center;
+                    text-transform: uppercase;
+                }
 
-        h2 {
-            color: var(--neon-yellow);
-            border-bottom: 1px solid #333;
-            padding-bottom: 10px;
-            margin-top: 40px;
-            font-size: 1.2em;
-        }
+                h1 {
+                    color: var(--neon-red);
+                    text-shadow: 0 0 10px rgba(255, 0, 60, 0.5);
+                    margin-bottom: 20px;
+                    font-size: 1.5em;
+                }
 
-        .form-group {
-            margin-bottom: 20px;
-        }
+                h2 {
+                    color: var(--neon-yellow);
+                    border-bottom: 1px solid #333;
+                    padding-bottom: 8px;
+                    margin-top: 25px;
+                    font-size: 1.1em;
+                }
 
-        label {
-            display: block;
-            margin-bottom: 8px;
-            color: var(--neon-yellow);
-            font-weight: 600;
-            letter-spacing: 1px;
-        }
+                /* Compact form elements */
+                .form-group {
+                    margin-bottom: 15px;
+                }
 
-        input[type="text"],
-        input[type="email"],
-        input[type="tel"] {
-            width: 100%;
-            padding: 12px;
-            background: #0a0a0a;
-            border: 1px solid #444;
-            color: var(--text-main);
-            border-radius: 6px;
-            font-family: 'Rajdhani', sans-serif;
-            font-size: 1.1em;
-            box-sizing: border-box;
-        }
+                label {
+                    display: block;
+                    margin-bottom: 4px;
+                    color: var(--neon-yellow);
+                    font-weight: 600;
+                    letter-spacing: 1px;
+                    font-size: 0.9em;
+                }
 
-        input:focus {
-            outline: none;
-            border-color: var(--neon-red);
-            box-shadow: 0 0 8px rgba(255, 0, 60, 0.4);
-        }
+                input[type="text"],
+                input[type="email"],
+                input[type="tel"] {
+                    width: 100%;
+                    padding: 10px;
+                    background: #0a0a0a;
+                    border: 1px solid #444;
+                    color: var(--text-main);
+                    border-radius: 6px;
+                    font-family: 'Rajdhani', sans-serif;
+                    font-size: 1em;
+                    box-sizing: border-box;
+                }
 
-        .day-group {
-            margin-bottom: 30px;
-        }
+                input:focus {
+                    outline: none;
+                    border-color: var(--neon-red);
+                    box-shadow: 0 0 8px rgba(255, 0, 60, 0.4);
+                }
 
-        .day-title {
-            color: var(--text-main);
-            background: linear-gradient(90deg, #330000 0%, transparent 100%);
-            padding: 10px;
-            border-left: 3px solid var(--neon-red);
-            font-family: 'Orbitron', sans-serif;
-            margin-bottom: 15px;
-        }
+                .day-group {
+                    margin-bottom: 20px;
+                }
 
-        .event-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-            gap: 15px;
-        }
+                .day-title {
+                    color: var(--text-main);
+                    background: linear-gradient(90deg, #330000 0%, transparent 100%);
+                    padding: 8px;
+                    border-left: 3px solid var(--neon-red);
+                    font-family: 'Orbitron', sans-serif;
+                    margin-bottom: 10px;
+                    font-size: 0.9em;
+                }
 
-        .event-card {
-            background: #0a0a0a;
-            border: 1px solid #333;
-            padding: 15px;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            position: relative;
-        }
+                /* Mobile Compact Lists instead of Grids */
+                .event-grid {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 8px;
+                }
 
-        .event-card:hover:not(.disabled) {
-            border-color: var(--neon-yellow);
-        }
+                .event-card {
+                    background: #0a0a0a;
+                    border: 1px solid #333;
+                    padding: 12px;
+                    border-radius: 6px;
+                    cursor: pointer;
+                    transition: all 0.2s ease;
+                    position: relative;
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                }
 
-        .event-card.selected {
-            border-color: var(--neon-green);
-            background: rgba(0, 255, 0, 0.05);
-            box-shadow: 0 0 10px rgba(0, 255, 0, 0.2);
-        }
+                .event-card:hover:not(.disabled) {
+                    border-color: var(--neon-yellow);
+                }
 
-        .event-card.disabled {
-            opacity: 0.4;
-            cursor: not-allowed;
-            filter: grayscale(100%);
-        }
+                .event-card.selected {
+                    border-color: var(--neon-green);
+                    background: rgba(0, 255, 0, 0.05);
+                    box-shadow: inset 0 0 10px rgba(0, 255, 0, 0.1);
+                }
 
-        .event-card h4 {
-            margin: 0 0 10px 0;
-            color: var(--text-main);
-            font-size: 1.1em;
-        }
+                .event-card.disabled {
+                    opacity: 0.4;
+                    cursor: not-allowed;
+                    filter: grayscale(100%);
+                }
 
-        .event-time {
-            font-size: 0.9em;
-            color: var(--neon-yellow);
-            display: flex;
-            justify-content: space-between;
-        }
+                .event-card h4 {
+                    margin: 0;
+                    color: var(--text-main);
+                    font-size: 1em;
+                }
+
+                .event-time {
+                    font-size: 0.85em;
+                    color: var(--neon-yellow);
+                    display: flex;
+                    flex-direction: column;
+                    text-align: right;
+                    gap: 2px;
+                }
 
         /* Hide actual checkbox to style the card */
         .event-checkbox {
@@ -233,7 +262,18 @@
 <div class="container">
     <h1>Techroot Registration</h1>
 
-    <form id="registrationForm">
+    <div class="nav-tabs">
+        <button type="button" id="btnReg" class="active">Register</button>
+        <button type="button" id="btnAdmin">Dashboard</button>
+    </div>
+
+    <div id="adminPanel" class="admin-panel">
+        <h2>Participants by Game</h2>
+        <div id="adminData">No participants yet.</div>
+        <button type="button" class="submit-btn" style="margin-top:20px; background:#444;" onclick="localStorage.removeItem('techrootData'); location.reload();">Clear All Data</button>
+    </div>
+
+    <form id="registrationForm" class="form-panel">
         <h2>Student Info</h2>
         <div class="form-group">
             <label>Full Name</label>
@@ -411,20 +451,87 @@
         e.preventDefault();
         
         // Example: Gather payload for Firebase
-        const formData = {
-            name: document.getElementById('name').value,
-            email: document.getElementById('email').value,
-            phone: document.getElementById('phone').value,
-            course: document.getElementById('course').value,
-            games: Array.from(checkboxes).filter(c => c.checked).map(c => c.value),
-            paymentMethod: document.querySelector('input[name="paymentMethod"]:checked').value,
-            totalPaid: document.getElementById('totalPrice').textContent
-        };
+                const formData = {
+                    name: document.getElementById('name').value,
+                    email: document.getElementById('email').value,
+                    phone: document.getElementById('phone').value,
+                    course: document.getElementById('course').value,
+                    games: Array.from(checkboxes).filter(c => c.checked).map(c => c.value),
+                    paymentMethod: document.querySelector('input[name="paymentMethod"]:checked').value,
+                    totalPaid: document.getElementById('totalPrice').textContent
+                };
 
-        console.log("Data ready for Firebase: ", formData);
-        alert("Registration payload ready! Check console. You can wire this object up to Firebase.");
-    });
-</script>
+                console.log("Data ready for Firebase: ", formData);
+        
+                // Save locally to display in the Admin Dashboard feature
+                let existingData = JSON.parse(localStorage.getItem('techrootData') || '[]');
+                existingData.push(formData);
+                localStorage.setItem('techrootData', JSON.stringify(existingData));
+        
+                alert("Registration Successful! Added to Local Dashboard.");
+                e.target.reset();
+        
+                // Reset dynamic UI logic after submit
+                checkboxes.forEach(cb => {
+                    cb.closest('.event-card').classList.remove('selected', 'disabled');
+                    cb.disabled = false;
+                });
+                priceDisplay.textContent = '₹0';
+                selectionText.textContent = '0 Games Selected';
+                submitBtn.disabled = true;
+                window.scrollTo(0,0);
+            });
+
+            // Tab and Dashboard Logic
+            const btnReg = document.getElementById('btnReg');
+            const btnAdmin = document.getElementById('btnAdmin');
+            const formPanel = document.getElementById('registrationForm');
+            const adminPanel = document.getElementById('adminPanel');
+
+            btnReg.addEventListener('click', () => {
+                btnReg.classList.add('active');
+                btnAdmin.classList.remove('active');
+                formPanel.classList.remove('hidden');
+                adminPanel.classList.remove('active');
+            });
+
+            btnAdmin.addEventListener('click', () => {
+                btnAdmin.classList.add('active');
+                btnReg.classList.remove('active');
+                formPanel.classList.add('hidden');
+                adminPanel.classList.add('active');
+                renderAdmin();
+            });
+
+            function renderAdmin() {
+                const data = JSON.parse(localStorage.getItem('techrootData') || '[]');
+                const adminData = document.getElementById('adminData');
+        
+                if (data.length === 0) {
+                    adminData.innerHTML = "<p style='text-align:center; color:#888;'>No participants registered yet.</p>";
+                    return;
+                }
+
+                const categoryMap = {};
+                data.forEach(user => {
+                    user.games.forEach(game => {
+                        if (!categoryMap[game]) categoryMap[game] = [];
+                        categoryMap[game].push(`<b>${user.name}</b> <span style="color:#888;">(${user.course})</span><br><span style="color:var(--neon-yellow); font-size: 0.9em;">${user.phone}</span>`);
+                    });
+                });
+
+                let html = '';
+                for (const [game, users] of Object.entries(categoryMap)) {
+                    html += `<div class="category-block">
+                                <h4>${game} <span style="float:right; color:#fff">${users.length}</span></h4>
+                                <ul class="participant-list">
+                                    ${users.map(u => `<li>${u}</li>`).join('')}
+                                </ul>
+                            </div>`;
+                }
+                adminData.innerHTML = html;
+            }
+        </script>
 
 </body>
 </html>
