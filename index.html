@@ -179,10 +179,58 @@
                                                 
                         
                                                 .event-card:hover:not(.disabled) { 
-                                                    background: var(--border-color);
-                                                    transform: scale(1.05);
-                                                    z-index: 10;
-                                                }
+                                                                                        background: var(--border-color);
+                                                                                        transform: scale(1.05);
+                                                                                        z-index: 10;
+                                                                                    }
+                                                                                    .event-card:active:not(.disabled) {
+                                                                                        background: #000000 !important;
+                                                                                    }
+                                                                                    .event-card.selected {
+                                                                                        background: #000000 !important;
+                                                                                        z-index: 5;
+                                                                                    }
+                                                                                    .event-card.disabled { opacity: 0.4; cursor: not-allowed; filter: grayscale(100%); z-index: 1; }
+                                                                                    .event-card h4 {
+                                                                                        margin: 0 0 3px 0;
+                                                                                        color: var(--text-main);
+                                                                                        font-weight: 700;
+                                                                                        font-size: 0.65em; /* Scaled down slightly */
+                                                                                        line-height: 1.1;
+                                                                                        letter-spacing: -0.3px; /* Prevent long words from breaking layout */
+                                                                                        transition: color 0.2s;
+                                                                                        word-wrap: break-word;
+                                                                                        width: 100%;
+                                                                                    }
+                                                                                    .event-time {
+                                                                                        font-family: 'JetBrains Mono', monospace;
+                                                                                        font-size: 0.6em; /* Scaled down */
+                                                                                        color: var(--accent);
+                                                                                        display: flex;
+                                                                                        flex-direction: column;
+                                                                                        align-items: center;
+                                                                                        gap: 1px;
+                                                                                        transition: color 0.2s;
+                                                                                    }
+                                                                                    .event-day-label {
+                                                                                        margin-top: 2px;
+                                                                                        font-size: 0.8em;
+                                                                                        font-weight: 800;
+                                                                                        color: var(--text-muted);
+                                                                                        transition: color 0.2s;
+                                                                                    }
+            
+                                                                                    /* Text changes on select to contrast with dark highlight */
+                                                                                    .event-card:active:not(.disabled) h4,
+                                                                                    .event-card:active:not(.disabled) .event-time,
+                                                                                    .event-card:active:not(.disabled) .event-time span,
+                                                                                    .event-card:active:not(.disabled) .event-day-label,
+                                                                                    .event-card.selected h4,
+                                                                                    .event-card.selected .event-time,
+                                                                                    .event-card.selected .event-time span,
+                                                                                    .event-card.selected .event-day-label {
+                                                                                        color: #ffffff !important;
+                                                                                    }
                                                 .event-card.selected {
                                                     background: var(--highlight);
                                                     z-index: 5;
