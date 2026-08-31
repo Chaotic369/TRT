@@ -92,16 +92,17 @@
                                                                         }
 
                                     body {
-                                                    background-color: var(--bg-color);
-                                                    background-image: radial-gradient(circle at top right, rgba(245, 158, 11, 0.08), transparent 400px), radial-gradient(circle at bottom left, rgba(249, 115, 22, 0.08), transparent 400px);
-                                                    color: var(--text-main);
-                                                    font-family: 'Open Sans', sans-serif;
-                                                    margin: 0;
-                                                    padding: 20px;
-                                                    box-sizing: border-box;
-                                                    min-height: 100vh;
-                                                    transition: background-color 0.4s ease, color 0.4s ease;
-                                                }
+                                                                                        background-color: var(--bg-color);
+                                                                                        background-image: radial-gradient(circle at top right, rgba(245, 158, 11, 0.08), transparent 400px), radial-gradient(circle at bottom left, rgba(249, 115, 22, 0.08), transparent 400px);
+                                                                                        color: var(--text-main);
+                                                                                        font-family: 'Open Sans', sans-serif;
+                                                                                        margin: 0;
+                                                                                        padding: 15px;
+                                                                                        box-sizing: border-box;
+                                                                                        min-height: 100vh;
+                                                                                        transition: background-color 0.4s ease, color 0.4s ease;
+                                                                                        zoom: 0.9;
+                                                                                    }
 
                                                 .container {
                                                     width: 100%;
@@ -533,18 +534,22 @@
                                                                         .crop-actions { display: flex; gap: 10px; margin-top: 16px; }
                             </style>
                 <script>
-                    if (localStorage.getItem('techrootTheme') === 'dark' || (!localStorage.getItem('techrootTheme') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-                        document.documentElement.classList.add('dark-mode');
-                    }
-                </script>
+                                    if (localStorage.getItem('techrootTheme') !== 'light') {
+                                        document.documentElement.classList.add('dark-mode');
+                                    }
+                                </script>
             </head>
 <body>
 <div class="emoji-flow" id="emojiFlow"></div>
 
 <div class="container">
     <h1 style="display: flex; align-items: center; justify-content: center; gap: 10px;">
-                <span style="color: #800000;">Techroot</span> Offline Registration
-                <button type="button" id="btnShare" style="background: transparent; border: none; cursor: pointer; padding: 0; display: flex; flex-direction: column; align-items: center; gap: 2px; color: var(--text-main); transition: transform 0.2s;" title="Share Website QR" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
+                    <span style="color: #800000;">Techroot</span> Offline Registration
+                    <button type="button" id="btnThemeToggle" style="background: transparent; border: none; cursor: pointer; padding: 0; display: flex; flex-direction: column; align-items: center; gap: 2px; color: var(--text-main); transition: transform 0.2s;" title="Toggle Theme" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+                        <span style="font-size: 0.4em; font-family: 'JetBrains Mono', monospace; font-weight: 600; line-height: 1; letter-spacing: 0.5px;">theme</span>
+                    </button>
+                    <button type="button" id="btnShare" style="background: transparent; border: none; cursor: pointer; padding: 0; display: flex; flex-direction: column; align-items: center; gap: 2px; color: var(--text-main); transition: transform 0.2s;" title="Share Website QR" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
                 <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <rect width="5" height="5" x="3" y="3" rx="1"></rect>
                     <rect width="5" height="5" x="16" y="3" rx="1"></rect>
@@ -777,11 +782,48 @@
     };
     
     // Initialize Firebase
-    // const app = initializeApp(firebaseConfig); // Commented out to prevent reference errors until SDK is loaded
+        // const app = initializeApp(firebaseConfig); // Commented out to prevent reference errors until SDK is loaded
 
-    
+        // Fetch and Sync Global Theme
+        (async function initThemeSettings() {
+            try {
+                const res = await fetch("https://techroot-11e5d-default-rtdb.firebaseio.com/settings/theme.json");
+                if (res.ok) {
+                    const data = await res.json();
+                    if (data && data.theme) {
+                        localStorage.setItem('techrootTheme', data.theme);
+                        if (data.theme === 'light') {
+                            document.documentElement.classList.remove('dark-mode');
+                        } else {
+                            document.documentElement.classList.add('dark-mode');
+                        }
+                    }
+                }
+            } catch(e) { console.error("Firebase Theme Load Error:", e); }
+        })();
 
-        document.getElementById('btnShare').addEventListener('click', () => {
+        document.getElementById('btnThemeToggle').addEventListener('click', async () => {
+            const isDark = document.documentElement.classList.contains('dark-mode');
+            const newTheme = isDark ? 'light' : 'dark';
+        
+            if (newTheme === 'dark') {
+                document.documentElement.classList.add('dark-mode');
+            } else {
+                document.documentElement.classList.remove('dark-mode');
+            }
+        
+            localStorage.setItem('techrootTheme', newTheme);
+        
+            try {
+                await fetch("https://techroot-11e5d-default-rtdb.firebaseio.com/settings/theme.json", {
+                    method: "PUT",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ theme: newTheme })
+                });
+            } catch(e) { console.error("Firebase Theme Save Error:", e); }
+        });
+
+            document.getElementById('btnShare').addEventListener('click', () => {
             const url = encodeURIComponent(window.location.href);
             document.getElementById('shareQrImg').src = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${url}&margin=0`;
             document.getElementById('shareOverlay').style.display = 'flex';
