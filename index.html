@@ -567,9 +567,12 @@
                 <button type="button" id="btnReg" class="active">Register</button>
                 <button type="button" id="btnAdmin">Dashboard</button>
             </div>
-            <div style="text-align: center; margin-top: -10px; margin-bottom: 20px;">
-                            <button type="button" onclick="window.open('https://sites.google.com/srinathuniversity.ac.in/techroot-4/home', '_blank')" style="background: var(--panel-bg); border: 1px solid var(--border-color); color: var(--text-muted); padding: 6px 14px; border-radius: 12px; font-size: 0.75em; cursor: pointer; font-family: 'Open Sans', sans-serif; transition: background 0.2s;">Click here official <span style="color: #800000;">techroot</span> site</button>
-                        </div>
+            <div style="text-align: center; margin-top: -10px; margin-bottom: 20px; display: flex; justify-content: center; align-items: center; gap: 8px;">
+                                        <button type="button" onclick="window.open('https://sites.google.com/srinathuniversity.ac.in/techroot-4/home', '_blank')" style="background: var(--panel-bg); border: 1px solid var(--border-color); color: var(--text-muted); padding: 6px 14px; border-radius: 12px; font-size: 0.75em; cursor: pointer; font-family: 'Open Sans', sans-serif; transition: background 0.2s;">Click here official <span style="color: #800000;">techroot</span> site</button>
+                                        <button type="button" onclick="document.getElementById('shareQrImg').src = 'https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=' + encodeURIComponent('https://sites.google.com/srinathuniversity.ac.in/techroot-4/home') + '&margin=0'; document.getElementById('shareOverlay').style.display = 'flex';" style="background: var(--panel-bg); border: 1px solid var(--border-color); color: var(--text-muted); padding: 6px; border-radius: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.2s;" title="Show Official Site QR">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="5" height="5" x="3" y="3" rx="1"></rect><rect width="5" height="5" x="16" y="3" rx="1"></rect><rect width="5" height="5" x="3" y="16" rx="1"></rect><path d="M21 16h-3a2 2 0 0 0-2 2v3"></path><path d="M21 21v.01"></path><path d="M12 7v3a2 2 0 0 1-2 2H7"></path><path d="M3 12h.01"></path><path d="M12 3h.01"></path><path d="M12 16v.01"></path><path d="M16 12h1"></path><path d="M21 12v.01"></path><path d="M12 21v-1"></path></svg>
+                                        </button>
+                                    </div>
 
     <div id="adminPanel" class="admin-panel">
             <h2>Participants</h2>
