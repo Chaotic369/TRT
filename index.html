@@ -448,14 +448,31 @@
 <body>
 
 <div class="container">
-    <h1>Techroot Offline Registration</h1>
+    <h1 style="display: flex; align-items: center; justify-content: center; gap: 10px;">
+        Techroot Offline Registration
+        <button type="button" id="btnShare" style="background: transparent; border: none; cursor: pointer; padding: 0; display: flex; color: var(--text-main); transition: transform 0.2s;" title="Share Website QR" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
+            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect width="5" height="5" x="3" y="3" rx="1"></rect>
+                <rect width="5" height="5" x="16" y="3" rx="1"></rect>
+                <rect width="5" height="5" x="3" y="16" rx="1"></rect>
+                <path d="M21 16h-3a2 2 0 0 0-2 2v3"></path>
+                <path d="M21 21v.01"></path>
+                <path d="M12 7v3a2 2 0 0 1-2 2H7"></path>
+                <path d="M3 12h.01"></path>
+                <path d="M12 3h.01"></path>
+                <path d="M12 16v.01"></path>
+                <path d="M16 12h1"></path>
+                <path d="M21 12v.01"></path>
+                <path d="M12 21v-1"></path>
+            </svg>
+        </button>
+    </h1>
 
     <div class="nav-tabs">
-                <button type="button" id="btnReg" class="active">Register</button>
-                <button type="button" id="btnAdmin">Dashboard</button>
-                <button type="button" id="btnShare" style="flex: 0 0 auto; width: 45px; padding: 0; display: flex; justify-content: center; align-items: center; font-size: 1.2em;" title="Share Website QR">📱</button>
-                <button type="button" id="themeToggle" style="flex: 0 0 auto; width: 45px; padding: 0; display: flex; justify-content: center; align-items: center; font-size: 1.2em;" title="Toggle Theme">🌓</button>
-            </div>
+            <button type="button" id="btnReg" class="active">Register</button>
+            <button type="button" id="btnAdmin">Dashboard</button>
+            <button type="button" id="themeToggle" style="flex: 0 0 auto; width: 45px; padding: 0; display: flex; justify-content: center; align-items: center; font-size: 1.2em;" title="Toggle Theme">🌓</button>
+        </div>
 
     <div id="adminPanel" class="admin-panel">
             <h2>Participants</h2>
