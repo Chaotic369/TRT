@@ -666,8 +666,13 @@
 
             <div class="upi-details" id="upiSection">
                                                                 <p style="color:var(--accent); font-weight:600;">Scan QR to Pay via UPI</p>
-                                                                <div id="qrDisplayArea" style="width: 150px; height: 150px; background: #fff; margin: 0 auto; display: flex; align-items: center; justify-content: center; color: #000; font-weight: bold; border-radius: 10px; overflow: hidden;">
-                                                                    [ QR CODE ]
+                                                                <div style="display: flex; align-items: center; justify-content: center; gap: 15px; margin: 0 auto;">
+                                                                    <div id="qrDisplayArea" style="width: 150px; height: 150px; background: #fff; display: flex; align-items: center; justify-content: center; color: #000; font-weight: bold; border-radius: 10px; overflow: hidden;">
+                                                                        [ QR CODE ]
+                                                                    </div>
+                                                                    <button type="button" onclick="downloadPaymentQR()" style="background:transparent; border:none; padding:0; cursor:pointer; color:var(--highlight); display:flex; align-items:center; justify-content:center; transition: transform 0.2s;" title="Download QR" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
+                                                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                                                                    </button>
                                                                 </div>
                                                                 <div style="display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 18px;">
                                                                     <p id="upiIdDisplay" style="font-size: 0.9em; color:var(--text-muted); margin: 0;">UPI ID: techroot@college</p>
