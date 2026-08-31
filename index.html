@@ -9,20 +9,21 @@
         <style>
             :root {
                             --bg-color: #fffaf5;
-                            --panel-bg: #ffffff;
-                            --border-color: #ffedd5;
+                            --panel-bg: rgba(255, 255, 255, 0.65);
+                            --border-color: rgba(255, 237, 213, 0.7);
                             --text-main: #1c1917;
                             --text-muted: #78716c;
                             --highlight: #f97316;
                             --accent: #f59e0b;
                             --shadow-sm: 0 4px 6px -1px rgba(249, 115, 22, 0.05), 0 2px 4px -1px rgba(249, 115, 22, 0.03);
                             --shadow-md: 0 10px 25px -3px rgba(249, 115, 22, 0.08), 0 4px 6px -2px rgba(249, 115, 22, 0.04);
+                            --glass-blur: blur(12px);
                         }
 
                         .dark-mode {
                                                 --bg-color: #1a1412;
-                                                --panel-bg: #29201d;
-                                                --border-color: #43322c;
+                                                --panel-bg: rgba(41, 32, 29, 0.65);
+                                                --border-color: rgba(67, 50, 44, 0.7);
                                                 --text-main: #f5f5f4;
                                                 --text-muted: #a8a29e;
                                                 --highlight: #fb923c;
@@ -30,6 +31,11 @@
                                                 --shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
                                                 --shadow-md: 0 10px 25px -3px rgba(0, 0, 0, 0.4), 0 4px 6px -2px rgba(0, 0, 0, 0.25);
                                             }
+
+                                    .nav-tabs, .category-block, input[type="text"], input[type="email"], input[type="tel"], .event-card, .summary-panel, .upi-details, .pattern-box, .crop-box {
+                                        backdrop-filter: var(--glass-blur);
+                                        -webkit-backdrop-filter: var(--glass-blur);
+                                    }
 
                                     * {
                                         -webkit-tap-highlight-color: transparent;
