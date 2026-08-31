@@ -451,10 +451,11 @@
     <h1>Techroot Offline Registration</h1>
 
     <div class="nav-tabs">
-            <button type="button" id="btnReg" class="active">Register</button>
-            <button type="button" id="btnAdmin">Dashboard</button>
-            <button type="button" id="themeToggle" style="flex: 0 0 auto; width: 45px; padding: 0; display: flex; justify-content: center; align-items: center; font-size: 1.2em;" title="Toggle Theme">🌓</button>
-        </div>
+                <button type="button" id="btnReg" class="active">Register</button>
+                <button type="button" id="btnAdmin">Dashboard</button>
+                <button type="button" id="btnShare" style="flex: 0 0 auto; width: 45px; padding: 0; display: flex; justify-content: center; align-items: center; font-size: 1.2em;" title="Share Website QR">📱</button>
+                <button type="button" id="themeToggle" style="flex: 0 0 auto; width: 45px; padding: 0; display: flex; justify-content: center; align-items: center; font-size: 1.2em;" title="Toggle Theme">🌓</button>
+            </div>
 
     <div id="adminPanel" class="admin-panel">
             <h2>Participants</h2>
@@ -599,15 +600,23 @@
                             </div>
 
                             <div id="cropOverlay">
-                                <div class="crop-box">
-                                    <h3>Crop QR Code</h3>
-                                    <img id="cropImgEl" src="">
-                                    <div class="crop-actions">
-                                        <button type="button" class="submit-btn" style="margin-top:0; padding:12px; background:var(--panel-bg); color:var(--text-main);" onclick="closeCropOverlay()">Cancel</button>
-                                        <button type="button" class="submit-btn" style="margin-top:0; padding:12px;" onclick="applyCrop()">Crop & Use</button>
-                                    </div>
-                                </div>
-                            </div>
+                                                            <div class="crop-box">
+                                                                <h3>Crop QR Code</h3>
+                                                                <img id="cropImgEl" src="">
+                                                                <div class="crop-actions">
+                                                                    <button type="button" class="submit-btn" style="margin-top:0; padding:12px; background:var(--panel-bg); color:var(--text-main);" onclick="closeCropOverlay()">Cancel</button>
+                                                                    <button type="button" class="submit-btn" style="margin-top:0; padding:12px;" onclick="applyCrop()">Crop & Use</button>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                        <div id="shareOverlay" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 1000; justify-content: center; align-items: center; backdrop-filter: blur(5px);">
+                                                            <div class="crop-box" style="text-align: center; max-width: 320px; width: 90%; background: var(--bg-color); border: 1px solid var(--border-color); border-radius: 20px; padding: 24px; box-sizing: border-box;">
+                                                                <h3 style="margin: 0 0 16px 0; font-size: 1em; color: var(--text-main);">Scan to Open Website</h3>
+                                                                <img id="shareQrImg" src="" style="width: 200px; height: 200px; margin: 0 auto; display: block; border-radius: 10px; background: #ffffff; padding: 10px; object-fit: contain;">
+                                                                <button type="button" class="submit-btn" style="margin-top:16px; padding:12px; background:var(--panel-bg); color:var(--text-main);" onclick="document.getElementById('shareOverlay').style.display='none'">Close</button>
+                                                            </div>
+                                                        </div>
 
                     <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
                     <script>
@@ -631,10 +640,16 @@
     // const app = initializeApp(firebaseConfig); // Commented out to prevent reference errors until SDK is loaded
 
     document.getElementById('themeToggle').addEventListener('click', () => {
-        document.documentElement.classList.toggle('dark-mode');
-        const isDark = document.documentElement.classList.contains('dark-mode');
-        localStorage.setItem('techrootTheme', isDark ? 'dark' : 'light');
-    });
+            document.documentElement.classList.toggle('dark-mode');
+            const isDark = document.documentElement.classList.contains('dark-mode');
+            localStorage.setItem('techrootTheme', isDark ? 'dark' : 'light');
+        });
+
+        document.getElementById('btnShare').addEventListener('click', () => {
+            const url = encodeURIComponent(window.location.href);
+            document.getElementById('shareQrImg').src = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${url}&margin=0`;
+            document.getElementById('shareOverlay').style.display = 'flex';
+        });
 
     const checkboxes = document.querySelectorAll('.event-checkbox');
     const priceDisplay = document.getElementById('totalPrice');
