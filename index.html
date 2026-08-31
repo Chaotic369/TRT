@@ -413,11 +413,11 @@
                             box-shadow: 0 10px 30px rgba(0,0,0,0.5);
                         }
                         .pattern-grid {
-                                                    display: grid; grid-template-columns: repeat(3, 1fr); gap: 45px; margin: 30px auto; width: max-content; touch-action: none;
-                                                }
-                                                .pattern-dot {
-                                                    width: 14px; height: 14px; border-radius: 50%; background: var(--text-muted); border: none; cursor: pointer; transition: 0.2s; position: relative;
-                                                }
+                                                                            display: grid; grid-template-columns: repeat(3, 1fr); gap: 45px; margin: 30px auto; width: max-content; touch-action: none; position: relative;
+                                                                        }
+                                                                        .pattern-dot {
+                                                                            width: 14px; height: 14px; border-radius: 50%; background: var(--text-muted); border: none; cursor: pointer; transition: 0.2s; position: relative; z-index: 1;
+                                                                        }
                                                 .pattern-dot::before {
                                                     content: ""; position: absolute; top: -20px; left: -20px; right: -20px; bottom: -20px; /* Expands touch target area for mobile */
                                                 }
@@ -582,8 +582,9 @@
                 <div class="pattern-box">
                     <div class="pattern-msg" id="patternMsg">Draw Pattern</div>
                     <div class="pattern-grid" id="patternGrid">
-                        <div class="pattern-dot" data-val="1"></div>
-                        <div class="pattern-dot" data-val="2"></div>
+                                            <svg id="patternLines" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; overflow: visible;"></svg>
+                                            <div class="pattern-dot" data-val="1"></div>
+                                            <div class="pattern-dot" data-val="2"></div>
                         <div class="pattern-dot" data-val="3"></div>
                         <div class="pattern-dot" data-val="4"></div>
                         <div class="pattern-dot" data-val="5"></div>
@@ -839,117 +840,145 @@
                                                 }
 
                         // Pattern Lock Logic
-                        const patternGrid = document.getElementById('patternGrid');
-                        const patternMsg = document.getElementById('patternMsg');
-                        const patternOverlay = document.getElementById('patternOverlay');
-                        let currentPattern = [];
-                        let isDrawingPattern = false;
-                        let patternMode = 'login'; 
-                        let tempPattern = '';
-                        let forceLoginAfterSet = false;
+                                                const patternGrid = document.getElementById('patternGrid');
+                                                const patternMsg = document.getElementById('patternMsg');
+                                                const patternOverlay = document.getElementById('patternOverlay');
+                                                const patternLines = document.getElementById('patternLines');
+                                                let currentPattern = [];
+                                                let dotCenters = [];
+                                                let isDrawingPattern = false;
+                                                let patternMode = 'login'; 
+                                                let tempPattern = '';
+                                                let forceLoginAfterSet = false;
+
+                                                function resetPatternDisplay(msg) {
+                                                    document.querySelectorAll('.pattern-dot').forEach(d => d.classList.remove('active'));
+                                                    if (patternLines) patternLines.innerHTML = '';
+                                                    dotCenters = [];
+                                                    if (msg) {
+                                                        patternMsg.innerText = msg;
+                                                        patternMsg.style.color = "var(--text-main)";
+                                                    }
+                                                }
             
-                        function openPatternLock(mode, forceLogin = false) {
-                            patternMode = mode;
-                            forceLoginAfterSet = forceLogin;
-                            currentPattern = [];
-                            patternMsg.innerText = mode === 'login' ? "Draw Pattern to Unlock" : "Draw New Pattern";
-                            patternMsg.style.color = "var(--text-main)";
-                            document.querySelectorAll('.pattern-dot').forEach(d => d.classList.remove('active'));
-                            patternOverlay.classList.add('active');
-                        }
+                                                function openPatternLock(mode, forceLogin = false) {
+                                                    patternMode = mode;
+                                                    forceLoginAfterSet = forceLogin;
+                                                    currentPattern = [];
+                                                    resetPatternDisplay(mode === 'login' ? "Draw Pattern to Unlock" : "Draw New Pattern");
+                                                    patternOverlay.classList.add('active');
+                                                }
 
-                        function closePattern() {
-                            patternOverlay.classList.remove('active');
-                        }
+                                                function closePattern() {
+                                                    patternOverlay.classList.remove('active');
+                                                }
 
-                        patternGrid.addEventListener('pointerdown', (e) => {
-                            isDrawingPattern = true;
-                            currentPattern = [];
-                            document.querySelectorAll('.pattern-dot').forEach(d => d.classList.remove('active'));
-                            handlePointerPattern(e);
-                        });
+                                                function drawLines(currentX, currentY) {
+                                                    if (!patternLines) return;
+                                                    let html = '';
+                                                    for (let i = 0; i < dotCenters.length - 1; i++) {
+                                                        html += `<line x1="${dotCenters[i].x}" y1="${dotCenters[i].y}" x2="${dotCenters[i+1].x}" y2="${dotCenters[i+1].y}" stroke="var(--highlight)" stroke-width="4" stroke-linecap="round"/>`;
+                                                    }
+                                                    if (isDrawingPattern && dotCenters.length > 0 && currentX !== undefined) {
+                                                        const last = dotCenters[dotCenters.length - 1];
+                                                        html += `<line x1="${last.x}" y1="${last.y}" x2="${currentX}" y2="${currentY}" stroke="var(--highlight)" stroke-width="4" stroke-linecap="round"/>`;
+                                                    }
+                                                    patternLines.innerHTML = html;
+                                                }
 
-                        window.addEventListener('pointermove', (e) => {
-                            if (!isDrawingPattern) return;
-                            handlePointerPattern(e);
-                        });
+                                                patternGrid.addEventListener('pointerdown', (e) => {
+                                                    isDrawingPattern = true;
+                                                    currentPattern = [];
+                                                    resetPatternDisplay();
+                                                    handlePointerPattern(e);
+                                                });
 
-                        window.addEventListener('pointerup', () => {
-                            if (!isDrawingPattern) return;
-                            isDrawingPattern = false;
-                            processPatternFinished();
-                        });
+                                                window.addEventListener('pointermove', (e) => {
+                                                    if (!isDrawingPattern) return;
+                                                    handlePointerPattern(e);
+                                                    if (isDrawingPattern) {
+                                                        const gridRect = patternGrid.getBoundingClientRect();
+                                                        drawLines(e.clientX - gridRect.left, e.clientY - gridRect.top);
+                                                    }
+                                                });
 
-                        function handlePointerPattern(e) {
-                            const el = document.elementFromPoint(e.clientX, e.clientY);
-                            if (el && el.classList.contains('pattern-dot')) {
-                                const val = el.getAttribute('data-val');
-                                if (!currentPattern.includes(val)) {
-                                    currentPattern.push(val);
-                                    el.classList.add('active');
-                                    if (navigator.vibrate) navigator.vibrate(20);
-                                }
-                            }
-                        }
+                                                window.addEventListener('pointerup', () => {
+                                                    if (!isDrawingPattern) return;
+                                                    isDrawingPattern = false;
+                                                    drawLines();
+                                                    processPatternFinished();
+                                                });
 
-                        function processPatternFinished() {
-                            if (currentPattern.length < 4) {
-                                patternMsg.innerText = "Connect at least 4 dots";
-                                patternMsg.style.color = "#ff003c";
-                                setTimeout(() => {
-                                    document.querySelectorAll('.pattern-dot').forEach(d => d.classList.remove('active'));
-                                    patternMsg.innerText = patternMode === 'login' ? "Draw Pattern to Unlock" : (patternMode === 'set1' ? "Draw New Pattern" : "Confirm Pattern");
-                                    patternMsg.style.color = "var(--text-main)";
-                                }, 1000);
-                                return;
-                            }
+                                                function handlePointerPattern(e) {
+                                                    const el = document.elementFromPoint(e.clientX, e.clientY);
+                                                    if (el && el.classList.contains('pattern-dot')) {
+                                                        const val = el.getAttribute('data-val');
+                                                        if (!currentPattern.includes(val)) {
+                                                            currentPattern.push(val);
+                                                            const rect = el.getBoundingClientRect();
+                                                            const gridRect = patternGrid.getBoundingClientRect();
+                                                            dotCenters.push({
+                                                                x: rect.left + rect.width / 2 - gridRect.left,
+                                                                y: rect.top + rect.height / 2 - gridRect.top
+                                                            });
+                                                            el.classList.add('active');
+                                                            if (navigator.vibrate) navigator.vibrate(20);
+                                                        }
+                                                    }
+                                                }
 
-                            const patternStr = currentPattern.join('');
+                                                function processPatternFinished() {
+                                                    if (currentPattern.length < 4) {
+                                                        patternMsg.innerText = "Connect at least 4 dots";
+                                                        patternMsg.style.color = "#ff003c";
+                                                        setTimeout(() => {
+                                                            resetPatternDisplay(patternMode === 'login' ? "Draw Pattern to Unlock" : (patternMode === 'set1' ? "Draw New Pattern" : "Confirm Pattern"));
+                                                        }, 1000);
+                                                        return;
+                                                    }
+
+                                                    const patternStr = currentPattern.join('');
                 
-                            if (patternMode === 'login') {
-                                const saved = localStorage.getItem('adminPattern');
-                                if (patternStr === saved) {
-                                    closePattern();
-                                    openDashboardDirect();
-                                } else {
-                                    patternMsg.innerText = "Incorrect Pattern";
-                                    patternMsg.style.color = "#ff003c";
-                                    setTimeout(() => {
-                                        document.querySelectorAll('.pattern-dot').forEach(d => d.classList.remove('active'));
-                                        patternMsg.innerText = "Draw Pattern to Unlock";
-                                        patternMsg.style.color = "var(--text-main)";
-                                    }, 1000);
-                                }
-                            } else if (patternMode === 'set1') {
-                                tempPattern = patternStr;
-                                patternMode = 'set2';
-                                patternMsg.innerText = "Draw Pattern Again to Confirm";
-                                document.querySelectorAll('.pattern-dot').forEach(d => d.classList.remove('active'));
-                            } else if (patternMode === 'set2') {
-                                                            if (patternStr === tempPattern) {
-                                                                localStorage.setItem('adminPattern', patternStr);
+                                                    if (patternMode === 'login') {
+                                                        const saved = localStorage.getItem('adminPattern');
+                                                        if (patternStr === saved) {
+                                                            closePattern();
+                                                            openDashboardDirect();
+                                                        } else {
+                                                            patternMsg.innerText = "Incorrect Pattern";
+                                                            patternMsg.style.color = "#ff003c";
+                                                            setTimeout(() => {
+                                                                resetPatternDisplay("Draw Pattern to Unlock");
+                                                            }, 1000);
+                                                        }
+                                                    } else if (patternMode === 'set1') {
+                                                        tempPattern = patternStr;
+                                                        patternMode = 'set2';
+                                                        patternMsg.innerText = "Draw Pattern Again to Confirm";
+                                                        resetPatternDisplay();
+                                                    } else if (patternMode === 'set2') {
+                                                                                    if (patternStr === tempPattern) {
+                                                                                        localStorage.setItem('adminPattern', patternStr);
                                     
-                                                                fetch("https://techroot-11e5d-default-rtdb.firebaseio.com/settings/pattern.json", {
-                                                                    method: "PUT",
-                                                                    headers: { "Content-Type": "application/json" },
-                                                                    body: JSON.stringify({ pattern: patternStr })
-                                                                }).catch(e => console.error("Firebase Lock Save Error:", e));
+                                                                                        fetch("https://techroot-11e5d-default-rtdb.firebaseio.com/settings/pattern.json", {
+                                                                                            method: "PUT",
+                                                                                            headers: { "Content-Type": "application/json" },
+                                                                                            body: JSON.stringify({ pattern: patternStr })
+                                                                                        }).catch(e => console.error("Firebase Lock Save Error:", e));
 
-                                                                alert("Pattern updated successfully!");
-                                                                closePattern();
-                                                                if(forceLoginAfterSet) openDashboardDirect();
-                                                            } else {
-                                    patternMsg.innerText = "Patterns do not match. Try again.";
-                                    patternMsg.style.color = "#ff003c";
-                                    patternMode = 'set1';
-                                    setTimeout(() => {
-                                        document.querySelectorAll('.pattern-dot').forEach(d => d.classList.remove('active'));
-                                        patternMsg.innerText = "Draw New Pattern";
-                                        patternMsg.style.color = "var(--text-main)";
-                                    }, 1000);
-                                }
-                            }
-                        }
+                                                                                        alert("Pattern updated successfully!");
+                                                                                        closePattern();
+                                                                                        if(forceLoginAfterSet) openDashboardDirect();
+                                                                                    } else {
+                                                            patternMsg.innerText = "Patterns do not match. Try again.";
+                                                            patternMsg.style.color = "#ff003c";
+                                                            patternMode = 'set1';
+                                                            setTimeout(() => {
+                                                                resetPatternDisplay("Draw New Pattern");
+                                                            }, 1000);
+                                                        }
+                                                    }
+                                                }
 
                         let deleteHistory = [];
 
