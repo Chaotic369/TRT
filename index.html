@@ -18,16 +18,20 @@
             }
 
             .dark-mode {
-                        --bg-color: #000432;
-                        --panel-bg: #080c4a;
-                        --border-color: #15195c;
-                        --text-main: #e2e8f0;
-                        --text-muted: #818cf8;
-                        --highlight: #c7d2fe;
-                        --accent: #818cf8;
-                    }
+                                    --bg-color: #000432;
+                                    --panel-bg: #080c4a;
+                                    --border-color: #15195c;
+                                    --text-main: #e2e8f0;
+                                    --text-muted: #818cf8;
+                                    --highlight: #c7d2fe;
+                                    --accent: #818cf8;
+                                }
 
-            body {
+                        * {
+                            -webkit-tap-highlight-color: transparent;
+                        }
+
+                        body {
                 background-color: var(--bg-color);
                 color: var(--text-main);
                 font-family: 'Open Sans', sans-serif;
