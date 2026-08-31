@@ -1092,13 +1092,14 @@
                                                 });
 
                                                 window.addEventListener('pointermove', (e) => {
-                                                    if (!isDrawingPattern) return;
-                                                    handlePointerPattern(e);
-                                                    if (isDrawingPattern) {
-                                                        const gridRect = patternGrid.getBoundingClientRect();
-                                                        drawLines(e.clientX - gridRect.left, e.clientY - gridRect.top);
-                                                    }
-                                                });
+                                                                                                    if (!isDrawingPattern) return;
+                                                                                                    handlePointerPattern(e);
+                                                                                                    if (isDrawingPattern) {
+                                                                                                        const gridRect = patternGrid.getBoundingClientRect();
+                                                                                                        const zoom = parseFloat(getComputedStyle(document.body).zoom) || 1;
+                                                                                                        drawLines((e.clientX - gridRect.left) / zoom, (e.clientY - gridRect.top) / zoom);
+                                                                                                    }
+                                                                                                });
 
                                                 window.addEventListener('pointerup', () => {
                                                     if (!isDrawingPattern) return;
@@ -1108,22 +1109,20 @@
                                                 });
 
                                                 function handlePointerPattern(e) {
-                                                    const el = document.elementFromPoint(e.clientX, e.clientY);
-                                                    if (el && el.classList.contains('pattern-dot')) {
-                                                        const val = el.getAttribute('data-val');
-                                                        if (!currentPattern.includes(val)) {
-                                                            currentPattern.push(val);
-                                                            const rect = el.getBoundingClientRect();
-                                                            const gridRect = patternGrid.getBoundingClientRect();
-                                                            dotCenters.push({
-                                                                x: rect.left + rect.width / 2 - gridRect.left,
-                                                                y: rect.top + rect.height / 2 - gridRect.top
-                                                            });
-                                                            el.classList.add('active');
-                                                            if (navigator.vibrate) navigator.vibrate(20);
-                                                        }
-                                                    }
-                                                }
+                                                                                                    const el = document.elementFromPoint(e.clientX, e.clientY);
+                                                                                                    if (el && el.classList.contains('pattern-dot')) {
+                                                                                                        const val = el.getAttribute('data-val');
+                                                                                                        if (!currentPattern.includes(val)) {
+                                                                                                            currentPattern.push(val);
+                                                                                                            dotCenters.push({
+                                                                                                                x: el.offsetLeft + el.offsetWidth / 2,
+                                                                                                                y: el.offsetTop + el.offsetHeight / 2
+                                                                                                            });
+                                                                                                            el.classList.add('active');
+                                                                                                            if (navigator.vibrate) navigator.vibrate(20);
+                                                                                                        }
+                                                                                                    }
+                                                                                                }
 
                                                 function processPatternFinished() {
                                                     if (currentPattern.length < 4) {
