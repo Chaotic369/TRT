@@ -72,8 +72,22 @@
                                     }
 
                                     * {
-                                        -webkit-tap-highlight-color: transparent;
-                                    }
+                                                                            -webkit-tap-highlight-color: transparent;
+                                                                        }
+
+                                                                        /* GPU acceleration and performance hints */
+                                                                        .emoji, .event-card, .nav-tabs button, input[type="text"], input[type="email"], input[type="tel"] {
+                                                                            transform: translateZ(0);
+                                                                            -webkit-transform: translateZ(0);
+                                                                            backface-visibility: hidden;
+                                                                            -webkit-backface-visibility: hidden;
+                                                                            perspective: 1000px;
+                                                                            -webkit-perspective: 1000px;
+                                                                        }
+
+                                                                        .emoji {
+                                                                            will-change: transform;
+                                                                        }
 
                                     body {
                                                     background-color: var(--bg-color);
